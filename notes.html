@@ -1,0 +1,62 @@
+
+https://job4j.ru/profile/exercise/91/task-view/479
+
+Pages (templates):
+
+tasks
+    table: # / name / date of creation / status
+    buttons: Show all / Show new / Show finished
+
+showTask
+    fields (all view only):
+        #
+        date of creation
+        name
+        description
+        status
+    buttons:
+        Mark as done - go back to task's page
+        Edit - available only task has 'news' status
+        Delete
+
+createTask
+    fields:
+        name
+        description
+    buttons:
+        Save
+        Discard (back to task's list)
+
+editTask
+    fields:
+        # - only view
+        date of creation - only view
+        status - only view
+        name - editable
+        description - editable
+    buttons:
+        Save
+        Discard (back to task's list)
+
+loginUser
+    fields:
+        name
+        login
+        password
+    buttons:
+        Login
+        Register
+
+registerUser
+    fields:
+        login
+        password
+    buttons:
+        Register
+
+Constrains:
+    task.name - length range 1-255, not blank string
+    task.description - length range 0-1000
+    user.name - length range 1-100, not blank string
+    user.login - length range 1-100, not blank string
+    user.password - length range 6-100, not blank string
