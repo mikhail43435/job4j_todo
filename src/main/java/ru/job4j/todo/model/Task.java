@@ -1,20 +1,25 @@
 package ru.job4j.todo.model;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class Item implements Serializable {
+@Entity
+@Table(name = "tasks")
+public class Task implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
+    private String name;
     private String description;
     private int status;
     private LocalDate created;
 
-    public Item() {
+    public Task() {
     }
 
-    public Item(int id, String description, int status, LocalDate created) {
+    public Task(int id, String description, int status, LocalDate created) {
         this.id = id;
         this.description = description;
         this.status = status;
@@ -27,6 +32,14 @@ public class Item implements Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
@@ -55,8 +68,9 @@ public class Item implements Serializable {
 
     @Override
     public String toString() {
-        return "Item{"
+        return "Task{"
                 + "id=" + id
+                + ", name='" + name + '\''
                 + ", description='" + description + '\''
                 + ", status=" + status
                 + ", created=" + created
@@ -71,8 +85,8 @@ public class Item implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Item item = (Item) o;
-        return id == item.id;
+        Task task = (Task) o;
+        return id == task.id;
     }
 
     @Override
