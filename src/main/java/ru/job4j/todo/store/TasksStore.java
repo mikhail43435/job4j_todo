@@ -15,7 +15,7 @@ public interface TasksStore extends AutoCloseable {
 
     boolean update(Task tasks);
 
-    boolean delete(int id);
+    boolean delete(Task task);
 
     List<Task> findAll();
 

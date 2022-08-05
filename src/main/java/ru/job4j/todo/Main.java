@@ -10,7 +10,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import ru.job4j.todo.service.LoggerService;
 
-import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Properties;
@@ -23,9 +22,7 @@ public class Main {
         try (BufferedReader io = new BufferedReader(
                 new InputStreamReader(
                         Main.class.getClassLoader()
-                                .getResourceAsStream("db.properties")
-                )
-        )) {
+                                .getResourceAsStream("db.properties")))) {
             cfg.load(io);
         } catch (Exception e) {
             throw new IllegalStateException(e);

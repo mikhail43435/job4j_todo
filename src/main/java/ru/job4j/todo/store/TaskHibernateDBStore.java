@@ -3,10 +3,10 @@ package ru.job4j.todo.store;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.query.Query;
+import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.service.LoggerService;
 
@@ -14,13 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class TaskDBStore implements TasksStore, AutoCloseable {
+@Repository
+public class TaskHibernateDBStore implements TasksStore, AutoCloseable {
     private final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
             .configure().build();
     private final SessionFactory sessionFactory;
 
-
-    public TaskDBStore(SessionFactory sessionFactory) {
+    public TaskHibernateDBStore(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
@@ -31,6 +31,7 @@ public class TaskDBStore implements TasksStore, AutoCloseable {
         try {
             transaction = session.beginTransaction();
             session.persist(task);
+            //task.setId((int) session.save(task));
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
@@ -77,14 +78,14 @@ public class TaskDBStore implements TasksStore, AutoCloseable {
     }
 
     @Override
-    public boolean delete(int id) {
+    public boolean delete(Task task) {
         boolean result = false;
         Session session = sessionFactory.openSession();
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
             int executeUpdateResult = session.createQuery("delete from Task where id = :id")
-                    .setParameter("id", id)
+                    .setParameter("id", task.getId())
                     .executeUpdate();
             transaction.commit();
             if (executeUpdateResult == 1) {
@@ -130,12 +131,13 @@ public class TaskDBStore implements TasksStore, AutoCloseable {
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
-            @SuppressWarnings("unchecked")
-            Query<Task> query =
+            Query query =
                     session.createQuery(
-                            "from Task i where i.id = :fname").
-                            setParameter("fname", id);
-            result = Optional.of(query.uniqueResult());
+                            "from Task i where i.id = :fid").
+                            setParameter("fid", id);
+            if (query.uniqueResult() != null) {
+                result = Optional.of((Task) query.uniqueResult());
+            }
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {

@@ -1,5 +1,6 @@
 package ru.job4j.todo.model;
 
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -19,8 +20,9 @@ public class Task implements Serializable {
     public Task() {
     }
 
-    public Task(int id, String description, int status, LocalDate created) {
+    public Task(int id, String name, String description, int status, LocalDate created) {
         this.id = id;
+        this.name = name;
         this.description = description;
         this.status = status;
         this.created = created;
