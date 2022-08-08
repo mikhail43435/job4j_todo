@@ -9,6 +9,7 @@ import ru.job4j.todo.model.Task;
 import ru.job4j.todo.service.LoggerService;
 
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -71,7 +72,7 @@ class TaskJDBCDBStoreTest {
                 "task 1 updated",
                 "task 1 updated desc",
                 2, LocalDate.now().plusDays(1));
-        store.update(taskToUpdate);
+        assertThat(store.update(taskToUpdate)).isTrue();
         Optional<Task> taskFromDBAfterUpdate = store.findById(taskToAdd.getId());
         assertThat(taskFromDBAfterUpdate).isPresent();
         assertThat(taskFromDBAfterUpdate.get().getId()).isEqualTo(taskToUpdate.getId());
@@ -85,10 +86,8 @@ class TaskJDBCDBStoreTest {
     void whenDelete() {
         Task taskToAdd = new Task(0, "task 5", "task 5 desc", 1, LocalDate.now());
         store.add(taskToAdd);
-        System.out.println("-----------------------");
-        System.out.println(taskToAdd);
         assertThat(store.findById(taskToAdd.getId())).isPresent();
-        store.delete(taskToAdd);
+        assertThat(store.delete(taskToAdd)).isTrue();
         assertThat(store.findById(taskToAdd.getId())).isNotPresent();
     }
 }

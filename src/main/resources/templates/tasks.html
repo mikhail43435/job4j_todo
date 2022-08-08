@@ -46,10 +46,10 @@
             </thead>
             <tbody>
             <tr th:each="task: ${tasks}">
-                <a th:href="@{|/showTask/${task.id}|}">
-                    <td th:text="${task.id}"></td>
-                </a>
-                <td th:text="${task.name}"/>
+                <td th:text="${task.id}"></td>
+                <td>
+                    <a th:href="@{|/showTask/${task.id}|}" th:text="${task.name}"></a>
+                </td>
                 <td th:text="${task.created}"/>
                 <td>
                     <th:block th:text="${TaskStatusHandler.getStatusString(task.status)}"/>
@@ -68,10 +68,10 @@
         <td><a th:href="@{|/tasks|}">
             <button type="submit" class="btn btn-primary">Show all</button>
         </a></td>
-        <td><a th:href="@{|/tasks|}">
+        <td><a th:href="@{|/tasks/${1}|}">
             <button type="submit" class="btn btn-primary">Show new</button>
         </a></td>
-        <td><a th:href="@{|/tasks|}">
+        <td><a th:href="@{|/tasks/${2}|}">
             <button type="submit" class="btn btn-primary">Show finished</button>
         </a></td>
     </div>

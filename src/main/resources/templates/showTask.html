@@ -48,6 +48,18 @@
             </div>
         </div>
     </div>
+    <br>
+    <div>
+        <td><a th:if="${task.status == 1}" th:href="@{|/markTask/${task.id}/2|}">
+            <button type="submit" class="btn btn-primary">Mark as done</button>
+        </a></td>
+        <td><a th:if="${task.status == 1}" th:href="@{|/editTask/${task.id}|}">
+            <button type="submit" class="btn btn-primary">Edit</button>
+        </a></td>
+        <td><a th:href="@{|/deleteTask/${task.id}|}">
+            <button type="submit" class="btn btn-primary">Delete</button>
+        </a></td>
+    </div>
 </div>
 </body>
 </html>

@@ -2,12 +2,14 @@ package ru.job4j.todo.store;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.stereotype.Repository;
+import ru.job4j.todo.exception.AddNewTaskException;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.service.LoggerService;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -41,12 +43,14 @@ public class TaskJDBCDBStore implements TasksStore {
             }
         } catch (Exception e) {
             LoggerService.LOGGER.error("Exception in TaskDBStore.add method", e);
+            throw new AddNewTaskException("Exception in TaskDBStore.add method", e);
         }
         return task;
     }
 
     @Override
     public boolean update(Task task) {
+        boolean result = false;
         try (var connection = pool.getConnection();
              var prepareStatement = connection.prepareStatement("UPDATE tasks SET"
                      + " name = ?,"
@@ -58,15 +62,26 @@ public class TaskJDBCDBStore implements TasksStore {
             prepareStatement.setInt(3, task.getStatus());
             prepareStatement.setInt(4, task.getId());
             prepareStatement.execute();
+            result = true;
         } catch (Exception e) {
             LoggerService.LOGGER.error("Exception in TaskDBStore.update method", e);
         }
-        return false;
+        return result;
     }
 
     @Override
     public boolean delete(Task task) {
-        return false;
+        boolean result = false;
+        try (var connection = pool.getConnection();
+             var prepareStatement =
+                     connection.prepareStatement("DELETE FROM tasks WHERE id = ? ")) {
+            prepareStatement.setInt(1, task.getId());
+            prepareStatement.execute();
+            result = true;
+        } catch (Exception e) {
+            LoggerService.LOGGER.error("Exception in TaskDBStore.update method", e);
+        }
+        return result;
     }
 
     @Override

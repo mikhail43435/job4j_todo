@@ -2,8 +2,10 @@ package ru.job4j.todo.service;
 
 import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Service;
+import ru.job4j.todo.exception.AddNewTaskException;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.store.TaskHibernateDBStore;
+import ru.job4j.todo.store.TaskJDBCDBStore;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,14 +14,30 @@ import java.util.Optional;
 @Service
 public class TaskService {
 
-    private final TaskHibernateDBStore store;
+    private final TaskJDBCDBStore store;
+    private final ValidationService validationService;
 
-    public TaskService(TaskHibernateDBStore store) {
+/*    public TaskService(TaskHibernateDBStore store) {
         this.store = store;
+    }*/
+
+    public TaskService(TaskJDBCDBStore store,
+                       ValidationService validationService) {
+        this.store = store;
+        this.validationService = validationService;
     }
 
     public Task add(Task task) {
-        return store.add(task);
+        String validationResult = validationService.validateTaskName(task.getName());
+        if (!validationResult.isEmpty()) {
+            throw new IllegalArgumentException(validationResult);
+        }
+        try {
+            store.add(task);
+        } catch (Exception e) {
+            throw new AddNewTaskException("Error in DB occurred while adding new task");
+        }
+        return task;
     }
 
     public boolean update(Task task) {
