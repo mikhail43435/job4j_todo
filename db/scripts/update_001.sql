@@ -1,5 +1,5 @@
 -- table for tasks
-CREATE TABLE IF NOT EXISTS tasks
+create TABLE IF NOT EXISTS tasks
 (
     id          SERIAL PRIMARY KEY,
     name        VARCHAR(255)  NOT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS tasks
 );
 
 -- table for user's accounts
-CREATE TABLE IF NOT EXISTS accounts
+create TABLE IF NOT EXISTS accounts
 (
     id       SERIAL PRIMARY KEY,
     name     VARCHAR(100),
