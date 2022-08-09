@@ -1,4 +1,4 @@
-package ru.job4j.todo.service;
+package ru.job4j.todo.util;
 
 import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Service;

@@ -4,7 +4,6 @@ import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Service;
 import ru.job4j.todo.exception.AddNewTaskException;
 import ru.job4j.todo.model.Task;
-import ru.job4j.todo.store.TaskHibernateDBStore;
 import ru.job4j.todo.store.TaskJDBCDBStore;
 
 import java.util.List;
@@ -17,7 +16,7 @@ public class TaskService {
     private final TaskJDBCDBStore store;
     private final ValidationService validationService;
 
-/*    public TaskService(TaskHibernateDBStore store) {
+    /*    public TaskService(TaskHibernateDBStore store) {
         this.store = store;
     }*/
 
@@ -50,6 +49,10 @@ public class TaskService {
 
     public List<Task> findAll() {
         return store.findAll();
+    }
+
+    public List<Task> findAllWithCertainStatus(int status) {
+        return store.findAllWithCertainStatus(status);
     }
 
     public Optional<Task> findById(int id) {

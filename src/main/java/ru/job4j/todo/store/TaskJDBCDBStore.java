@@ -9,7 +9,6 @@ import ru.job4j.todo.service.LoggerService;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -135,6 +134,36 @@ public class TaskJDBCDBStore implements TasksStore {
     }
 
     @Override
+    public List<Task> findAllWithCertainStatus(int status) {
+        List<Task> result = new ArrayList<>();
+        try (var connection = pool.getConnection();
+             var prepareStatement =
+                     connection.prepareStatement("SELECT * FROM tasks AS t "
+                             + "WHERE t.status = ? ORDER BY id;")
+        ) {
+            prepareStatement.setInt(1, status);
+            try (var resultSet = prepareStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    result.add(new Task(resultSet.getInt("id"),
+                            resultSet.getString("name"),
+                            resultSet.getString("description"),
+                            resultSet.getInt("status"),
+                            LocalDate.ofInstant(
+                                    resultSet.getTimestamp("created").toInstant(),
+                                    ZoneId.systemDefault())
+                    ));
+                }
+            }
+        } catch (Exception e) {
+            LoggerService.LOGGER.error(
+                    "Exception in TaskDBStore.findAllWithCertainStatus method",
+                    e);
+        }
+        return result;
+    }
+
+    @Override
     public void close() throws Exception {
+        pool.close();
     }
 }

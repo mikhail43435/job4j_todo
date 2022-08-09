@@ -17,6 +17,12 @@ import java.util.Properties;
 @SpringBootApplication
 public class Main {
 
+    public static void main(String[] args) {
+        SpringApplication.run(Main.class, args);
+        System.out.println("Go to http://localhost:8080/index");
+        LoggerService.LOGGER.info("System started");
+    }
+
     private Properties loadDbProperties() {
         Properties cfg = new Properties();
         try (BufferedReader io = new BufferedReader(
@@ -54,11 +60,5 @@ public class Main {
         pool.setMaxIdle(10);
         pool.setMaxOpenPreparedStatements(100);
         return pool;
-    }
-
-    public static void main(String[] args) {
-        SpringApplication.run(Main.class, args);
-        System.out.println("Go to http://localhost:8080/index");
-        LoggerService.LOGGER.info("System started");
     }
 }

@@ -22,14 +22,16 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">Cinema portal</a>
+    <a class="navbar-brand" href="#">TODO</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
             aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav nav-pills">
-            [(${htmlMenuCodeToInject})]
+            <a class="nav-item nav-link" href="/tasks">Tasks</a>
+            <a class="nav-item nav-link" href="/createTask">Create task </a>
+            <a class="nav-item nav-link" href="/loginUser">Login</a>
         </div>
     </div>
 </nav>
@@ -52,16 +54,17 @@
                                th:field="*{created}">
                     </div>
                     <div class="form-group">
-                        <label for="name">Created</label>
-                        <input type="text" readonly="readonly" class="form-control" name="statusString" id="statusString"
-                               th:field="*{statusString}">
+                        <label for="name">Status</label>
+                        <input type="text" readonly="readonly" class="form-control" name="statusString"
+                               id="statusString"
+                               th:value="${statusString}">
                     </div>
                     <div class="form-group">
                         <label for="name">Name</label>
                         <input type="text" class="form-control" name="name" id="name" th:field="*{name}">
                     </div>
                     <div class="form-group">
-                        <label for="name">Name</label>
+                        <label for="name">Description</label>
                         <input type="text" class="form-control" name="description"
                                id="description" th:field="*{description}">
                     </div>

@@ -20,4 +20,6 @@ public interface TasksStore extends AutoCloseable {
     List<Task> findAll();
 
     Optional<Task> findById(int id);
+
+    List<Task> findAllWithCertainStatus(int status);
 }

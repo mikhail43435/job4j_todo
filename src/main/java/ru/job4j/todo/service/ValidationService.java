@@ -13,7 +13,7 @@ public class ValidationService {
                     + taskName
                     + "> The length of the task's name can not contain spaces only.";
         } else if (taskName.length() < 1 || taskName.length() > 255) {
-            return  "Invalid task name: <"
+            return "Invalid task name: <"
                     + taskName
                     + "> The length of the task's name must be in the range 1 - 255 .";
         }
