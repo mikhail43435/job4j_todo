@@ -5,10 +5,6 @@ import ru.job4j.todo.model.Task;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Интерфейс хранилища
- */
-
 public interface TasksStore extends AutoCloseable {
 
     Task add(Task task);
