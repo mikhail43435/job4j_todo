@@ -39,28 +39,12 @@
     <div class="row">
         <div class="card" style="width: 100%">
             <div class="card-header">
-                Task details
+                Error
             </div>
             <div class="card-body">
-                <label>Id: <span th:text="${task.id}"></span></label><br>
-                <label>Name: <span th:text="${task.name}"></span></label><br>
-                <label>Description: <span th:text="${task.description}"></span></label><br>
-                <label>Created: <span th:text="${task.created}"></span></label><br>
-                <label>Status: <span th:text="${TaskStatusHandler.getStatusString(task.status)}"></span></label>
+                <label>Error occurred... We will found out the reason of that error soon.</label><br>
             </div>
         </div>
-    </div>
-    <br>
-    <div>
-        <td><a th:if="${task.status == 1}" th:href="@{|/markTask/${task.id}/2|}">
-            <button type="submit" class="btn btn-primary">Mark as done</button>
-        </a></td>
-        <td><a th:if="${task.status == 1}" th:href="@{|/editTask/${task.id}|}">
-            <button type="submit" class="btn btn-primary">Edit</button>
-        </a></td>
-        <td><a th:href="@{|/deleteTask/${task.id}|}">
-            <button type="submit" class="btn btn-primary">Delete</button>
-        </a></td>
     </div>
 </div>
 </body>

@@ -22,17 +22,23 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">Cinema portal</a>
+    <a class="navbar-brand" href="#">TODO</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
             aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav nav-pills">
-            [(${htmlMenuCodeToInject})]
+            <a class="nav-item nav-link active" href="#">Tasks <span class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link" href="/createTask">Create task </a>
+            <a class="nav-item nav-link" href="/loginUser">Login</a>
         </div>
     </div>
 </nav>
+<br>
+<div class="container">
+    <h4 class="mb-3">[(${HeaderText})]</h4>
+</div>
 <div class="container">
     <div class="row">
         <table class="table">
@@ -68,10 +74,10 @@
         <td><a th:href="@{|/tasks|}">
             <button type="submit" class="btn btn-primary">Show all</button>
         </a></td>
-        <td><a th:href="@{|/tasks/${1}|}">
+        <td><a th:href="@{|/tasks/?mode=1|}">
             <button type="submit" class="btn btn-primary">Show new</button>
         </a></td>
-        <td><a th:href="@{|/tasks/${2}|}">
+        <td><a th:href="@{|/tasks/?mode=2|}">
             <button type="submit" class="btn btn-primary">Show finished</button>
         </a></td>
     </div>

@@ -31,7 +31,6 @@ public class TaskHibernateDBStore implements TasksStore, AutoCloseable {
         try {
             transaction = session.beginTransaction();
             session.persist(task);
-            //task.setId((int) session.save(task));
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
@@ -144,6 +143,30 @@ public class TaskHibernateDBStore implements TasksStore, AutoCloseable {
                 transaction.rollback();
             }
             LoggerService.LOGGER.error("Exception in TaskDBStore.findById method", e);
+        } finally {
+            session.close();
+        }
+        return result;
+    }
+
+    @Override
+    public List<Task> findAllWithCertainStatus(int status) {
+        List<Task> result = new ArrayList<>();
+        Session session = sessionFactory.openSession();
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            @SuppressWarnings("unchecked")
+            Query<Task> query = session.createQuery("from Task i where i.status = :fstatus").
+                    setParameter("fstatus", status);
+            result.addAll(query.list());
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            LoggerService.LOGGER.
+                    error("Exception in TaskDBStore.findAllWithCertainStatus method", e);
         } finally {
             session.close();
         }

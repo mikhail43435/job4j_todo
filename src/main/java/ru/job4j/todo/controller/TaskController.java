@@ -6,11 +6,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.service.LoggerService;
 import ru.job4j.todo.service.TaskService;
 import ru.job4j.todo.service.TaskStatusHandler;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
+import java.util.List;
 
 @ThreadSafe
 @Controller
@@ -24,9 +26,40 @@ public class TaskController {
         this.taskStatusHandler = taskStatusHandler;
     }
 
+    @GetMapping("/index")
+    public String index(Model model,
+                        HttpSession session) {
+        return "redirect:/tasks";
+    }
+
     @GetMapping("/tasks")
-    public String tasks(Model model, HttpSession session) {
-        model.addAttribute("tasks", taskService.findAll());
+    public String tasks(Model model,
+                        HttpSession session,
+                        @RequestParam(
+                                name = "mode",
+                                defaultValue = "0",
+                                required = false) String mode) {
+        String headerText;
+        int modeIntValue;
+        List<Task> list;
+        try {
+            modeIntValue = Integer.parseInt(mode);
+        } catch (Exception e) {
+            modeIntValue = 0;
+        }
+        if (modeIntValue == 1) {
+            headerText = "New tasks";
+            list = taskService.findAllWithCertainStatus(1);
+        } else if (modeIntValue == 2) {
+            headerText = "Finished tasks";
+            list = taskService.findAllWithCertainStatus(2);
+        } else {
+            headerText = "All tasks";
+            list = taskService.findAll();
+        }
+
+        model.addAttribute("tasks", list);
+        model.addAttribute("HeaderText", headerText);
         model.addAttribute("TaskStatusHandler", taskStatusHandler);
         return "tasks";
     }
@@ -44,7 +77,8 @@ public class TaskController {
     public String createTaskGet(Model model,
                                 HttpSession session,
                                 @RequestParam(name = "fail", required = false) Boolean fail,
-                                @RequestParam(name = "errorMessage", defaultValue = "") String errorMessage,
+                                @RequestParam(name = "errorMessage",
+                                        defaultValue = "") String errorMessage,
                                 @ModelAttribute Task task) {
         model.addAttribute("fail", fail != null);
         model.addAttribute("errorMessage", errorMessage);
@@ -105,5 +139,11 @@ public class TaskController {
                              @PathVariable("taskId") int id) {
         taskService.delete(taskService.findById(id).get());
         return "redirect:/tasks/";
+    }
+
+    @ExceptionHandler({Exception.class})
+    public String handleException(Exception e, Model model) {
+        LoggerService.LOGGER.error("Exception TaskController.java", e);
+        return "redirect:/error";
     }
 }

@@ -62,6 +62,18 @@ class TaskHibernateDBStoreTest {
     }
 
     @Test
+    void whenFindWithCertainStatus() {
+        List<Task> list = store.findAll();
+        Task taskToAdd1 = new Task(0, "task 321", "task 321 desc", 4, LocalDate.now());
+        store.add(taskToAdd1);
+        Task taskToAdd2 = new Task(0, "task 322", "task 322 desc", 4, LocalDate.now());
+        store.add(taskToAdd2);
+        List<Task> listOfNewTasks = List.of(taskToAdd1, taskToAdd2);
+        list.addAll(listOfNewTasks);
+        assertThat(store.findAll()).isEqualTo(list);
+    }
+
+    @Test
     void whenUpdate() {
         Task taskToAdd = new Task(0, "task 4", "task 4 desc", 1, LocalDate.now());
         store.add(taskToAdd);
