@@ -30,6 +30,7 @@ public class TaskHibernateDBStore implements TasksStore, AutoCloseable {
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
+            //task.setId(1000);
             session.persist(task);
             transaction.commit();
         } catch (Exception e) {

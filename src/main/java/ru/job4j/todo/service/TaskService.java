@@ -4,6 +4,7 @@ import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Service;
 import ru.job4j.todo.exception.AddNewTaskException;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.store.TaskHibernateDBStore;
 import ru.job4j.todo.store.TaskJDBCDBStore;
 
 import java.util.List;
@@ -13,18 +14,20 @@ import java.util.Optional;
 @Service
 public class TaskService {
 
-    private final TaskJDBCDBStore store;
+    private final TaskHibernateDBStore store;
     private final ValidationService validationService;
 
-    /*    public TaskService(TaskHibernateDBStore store) {
-        this.store = store;
-    }*/
-
-    public TaskService(TaskJDBCDBStore store,
+    public TaskService(TaskHibernateDBStore store,
                        ValidationService validationService) {
         this.store = store;
         this.validationService = validationService;
     }
+
+    /*public TaskService(TaskJDBCDBStore store,
+                       ValidationService validationService) {
+        this.store = store;
+        this.validationService = validationService;
+    }*/
 
     public Task add(Task task) {
         String validationResult = validationService.validateTaskName(task.getName());
