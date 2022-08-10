@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import ru.job4j.todo.exception.AddNewTaskException;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.store.TaskHibernateDBStore;
-import ru.job4j.todo.store.TaskJDBCDBStore;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,12 +21,6 @@ public class TaskService {
         this.store = store;
         this.validationService = validationService;
     }
-
-    /*public TaskService(TaskJDBCDBStore store,
-                       ValidationService validationService) {
-        this.store = store;
-        this.validationService = validationService;
-    }*/
 
     public Task add(Task task) {
         String validationResult = validationService.validateTaskName(task.getName());

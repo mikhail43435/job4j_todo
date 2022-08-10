@@ -1,10 +1,14 @@
 package ru.job4j.todo.model;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
+@Entity
+@Table(name = "users")
 public class User implements Serializable {
-
+    @Id
+    @GeneratedValue(strategy =  GenerationType.IDENTITY)
     private int id;
     private String name;
     private String login;
@@ -71,7 +75,7 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "Customer{id=" + id
+        return "User{id=" + id
                 + ", name='" + name + '\''
                 + ", login='" + login + '\''
                 + ", password=*hidden*'" + '\''

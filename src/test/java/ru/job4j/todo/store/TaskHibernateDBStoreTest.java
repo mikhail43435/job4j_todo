@@ -7,10 +7,10 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.service.LoggerService;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -24,9 +24,10 @@ class TaskHibernateDBStoreTest {
             store = new TaskHibernateDBStore(new
                     MetadataSources(new StandardServiceRegistryBuilder()
                     .configure().build()).buildMetadata().buildSessionFactory());
-        } catch (HibernateException exception) {
-            System.out.println("Problem creating session factory");
-            exception.printStackTrace();
+        } catch (HibernateException e) {
+            LoggerService.LOGGER.error(
+                    "Exception in creating session factory in TaskHibernateDBStore.init method",
+                    e);
         }
     }
 
@@ -56,9 +57,18 @@ class TaskHibernateDBStoreTest {
         store.add(taskToAdd2);
         Task taskToAdd3 = new Task(0, "task 33", "task 33 desc", 1, LocalDate.now());
         store.add(taskToAdd3);
-        List<Task> listOfNewTasks = List.of(taskToAdd1, taskToAdd2, taskToAdd3);
+        Task taskToAdd4 =
+                new Task(0, "task 34", "task 34 desc", 1, LocalDate.now().minusDays(1));
+        store.add(taskToAdd4);
+        Task taskToAdd5 = new Task(0, "task 5535", "task 35 desc", 2, LocalDate.now());
+        store.add(taskToAdd5);
+        Task taskToAdd6 = new Task(0, "task 36", "task 36 desc", 1, LocalDate.now());
+        store.add(taskToAdd6);
+        List<Task> listOfNewTasks =
+                List.of(taskToAdd1, taskToAdd2, taskToAdd3, taskToAdd4, taskToAdd5, taskToAdd6);
         list.addAll(listOfNewTasks);
-        assertThat(store.findAll()).isEqualTo(list);
+        list.sort(Comparator.comparing((obj) -> obj.getId()));
+        assertThat(store.findAll().toString()).hasToString(list.toString());
     }
 
     @Test
@@ -82,7 +92,8 @@ class TaskHibernateDBStoreTest {
                 "task 1 updated",
                 "task 1 updated desc",
                 2, LocalDate.now().plusDays(1));
-        store.update(taskToUpdate);
+        assertThat(store.update(taskToUpdate)).isTrue();
+
         Optional<Task> taskFromDBAfterUpdate = store.findById(taskToAdd.getId());
         assertThat(taskFromDBAfterUpdate).isPresent();
         assertThat(taskFromDBAfterUpdate.get().getId()).isEqualTo(taskToUpdate.getId());

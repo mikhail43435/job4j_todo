@@ -13,9 +13,10 @@ public interface AccountStore extends AutoCloseable {
 
     boolean verify(User user);
 
+    boolean delete(User user);
+
     List<User> findAll();
 
     Optional<User> findById(int id);
 
-    List<User> findAllWithCertainStatus(int status);
 }

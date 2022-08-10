@@ -9,7 +9,7 @@ create TABLE IF NOT EXISTS tasks
 );
 
 -- table for user's accounts
-create TABLE IF NOT EXISTS accounts
+create TABLE IF NOT EXISTS users
 (
     id       SERIAL PRIMARY KEY,
     name     VARCHAR(100),
