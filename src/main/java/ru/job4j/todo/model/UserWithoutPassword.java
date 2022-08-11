@@ -4,11 +4,12 @@ import com.sun.istack.NotNull;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Objects;
 
 @Entity
 @Table(name = "users")
-public class User implements Serializable {
+public class UserWithoutPassword extends User implements Serializable {
     @Id
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
     private int id;
@@ -23,10 +24,10 @@ public class User implements Serializable {
     @NotNull
     private char[] password;
 
-    public User() {
+    public UserWithoutPassword() {
     }
 
-    public User(int id, String name, String login, char[] password) {
+    public UserWithoutPassword(int id, String name, String login, char[] password) {
         this.id = id;
         this.name = name;
         this.login = login;
@@ -62,7 +63,7 @@ public class User implements Serializable {
     }
 
     public void setPassword(char[] password) {
-        this.password = password;
+        this.password = new char[0];
     }
 
     @Override
@@ -73,7 +74,7 @@ public class User implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        User customer = (User) o;
+        UserWithoutPassword customer = (UserWithoutPassword) o;
         return id == customer.id;
     }
 
@@ -87,7 +88,7 @@ public class User implements Serializable {
         return "User{id=" + id
                 + ", name='" + name + '\''
                 + ", login='" + login + '\''
-                + ", password=*hidden*'" + '\''
+                + ", password=" + Arrays.toString(password) + '\''
                 + '}';
     }
 }

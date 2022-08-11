@@ -31,14 +31,7 @@
         <div class="navbar-nav nav-pills">
             <a class="nav-item nav-link" href="/tasks">Tasks</a>
             <a class="nav-item nav-link" href="/createTask">Create task </a>
-            <a class="nav-item nav-link" th:if="${user.id == -1}" th:href="@{/loginUser}">
-                <span th:text="${user.name}"></span>
-                <span> | Login</span>
-            </a>
-            <a class="nav-item nav-link" th:if="${user.id != -1}" th:href="@{/logoutUser}">
-                <span th:text="${user.name}"></span>
-                <span> | Logout</span>
-            </a>
+            <a class="nav-item nav-link active" href="#">Login <span class="sr-only">(current)</span></a>
         </div>
     </div>
 </nav>
@@ -46,10 +39,32 @@
     <div class="row">
         <div class="card" style="width: 100%">
             <div class="card-header">
-                Error
+                Authorisation for users
             </div>
             <div class="card-body">
-                <label>Error occurred... We will found out the reason of that error soon.</label><br>
+                <div th:if="${fail}" class="alert alert-danger" role="alert">
+                    Invalid e-mail or/and password!
+                </div>
+                <form th:action="@{/loginUser}" method="POST" th:object="${user}">
+                    <input type="hidden" id="id" name="id" value="0"/>
+                    <div class="form-group">
+                        <label>Login</label>
+                        <input type="text" class="form-control" name="login">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="text" class="form-control" name="password">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/registrationUser}" method="GET">
+                    <div class="form-group">
+                        <label>New user?</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Register</button>
+                </form>
             </div>
         </div>
     </div>

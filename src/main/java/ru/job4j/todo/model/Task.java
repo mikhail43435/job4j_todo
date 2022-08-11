@@ -1,6 +1,8 @@
 package ru.job4j.todo.model;
 
 
+import com.sun.istack.NotNull;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -12,9 +14,17 @@ public class Task implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @NotNull
     private String name;
+
+    @NotNull
     private String description;
+
+    @NotNull
     private int status;
+
+    @NotNull
     private LocalDate created;
 
     public Task() {

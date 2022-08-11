@@ -31,7 +31,14 @@
         <div class="navbar-nav nav-pills">
             <a class="nav-item nav-link active" href="#">Tasks <span class="sr-only">(current)</span></a>
             <a class="nav-item nav-link" href="/createTask">Create task </a>
-            <a class="nav-item nav-link" href="/loginUser">Login</a>
+            <a class="nav-item nav-link" th:if="${user.id == -1}" th:href="@{/loginUser}">
+                <span th:text="${user.name}"></span>
+                <span> | Login</span>
+            </a>
+            <a class="nav-item nav-link" th:if="${user.id != -1}" th:href="@{/logoutUser}">
+                <span th:text="${user.name}"></span>
+                <span> | Logout</span>
+            </a>
         </div>
     </div>
 </nav>

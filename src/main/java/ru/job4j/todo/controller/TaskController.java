@@ -9,6 +9,7 @@ import ru.job4j.todo.model.Task;
 import ru.job4j.todo.service.LoggerService;
 import ru.job4j.todo.service.TaskService;
 import ru.job4j.todo.util.TaskStatusHandler;
+import ru.job4j.todo.util.UserHandler;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
@@ -20,10 +21,14 @@ public class TaskController {
 
     private final TaskService taskService;
     private final TaskStatusHandler taskStatusHandler;
+    private final UserHandler userHandler;
 
-    public TaskController(TaskService taskService, TaskStatusHandler taskStatusHandler) {
+    public TaskController(TaskService taskService,
+                          TaskStatusHandler taskStatusHandler,
+                          UserHandler userHandler) {
         this.taskService = taskService;
         this.taskStatusHandler = taskStatusHandler;
+        this.userHandler = userHandler;
     }
 
     @GetMapping("/index")
@@ -61,6 +66,7 @@ public class TaskController {
         model.addAttribute("tasks", list);
         model.addAttribute("HeaderText", headerText);
         model.addAttribute("TaskStatusHandler", taskStatusHandler);
+        model.addAttribute("user", userHandler.handleUserOfCurrentSession(session));
         return "tasks";
     }
 
@@ -70,6 +76,7 @@ public class TaskController {
                            @PathVariable("taskId") int id) {
         model.addAttribute("task", taskService.findById(id).get());
         model.addAttribute("TaskStatusHandler", taskStatusHandler);
+        model.addAttribute("user", userHandler.handleUserOfCurrentSession(session));
         return "showTask";
     }
 
@@ -83,6 +90,7 @@ public class TaskController {
         model.addAttribute("fail", fail != null);
         model.addAttribute("errorMessage", errorMessage);
         model.addAttribute("task", task);
+        model.addAttribute("user", userHandler.handleUserOfCurrentSession(session));
         return "createTask";
     }
 
@@ -112,6 +120,7 @@ public class TaskController {
         taskService.update(task);
         model.addAttribute("task", task);
         model.addAttribute("TaskStatusHandler", taskStatusHandler);
+        model.addAttribute("user", userHandler.handleUserOfCurrentSession(session));
         return "showTask";
     }
 
@@ -122,6 +131,7 @@ public class TaskController {
         Task task = taskService.findById(id).get();
         model.addAttribute("task", task);
         model.addAttribute("statusString", taskStatusHandler.getStatusString(task.getStatus()));
+        model.addAttribute("user", userHandler.handleUserOfCurrentSession(session));
         return "editTask";
     }
 
@@ -138,12 +148,13 @@ public class TaskController {
                              HttpSession session,
                              @PathVariable("taskId") int id) {
         taskService.delete(taskService.findById(id).get());
+        model.addAttribute("user", userHandler.handleUserOfCurrentSession(session));
         return "redirect:/tasks/";
     }
 
     @ExceptionHandler({Exception.class})
     public String handleException(Exception e, Model model) {
-        LoggerService.LOGGER.error("Exception TaskController.java", e);
+        LoggerService.LOGGER.error("Exception in TaskController.java", e);
         return "redirect:/error";
     }
 }

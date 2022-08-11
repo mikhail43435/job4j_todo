@@ -11,12 +11,11 @@ public interface AccountStore extends AutoCloseable {
 
     boolean update(User users);
 
-    boolean verify(User user);
-
     boolean delete(User user);
 
-    List<User> findAll();
+    List<? extends User> findAll();
 
-    Optional<User> findById(int id);
+    Optional<? extends User> findById(int id);
 
+    Optional<? extends User> findByLoginAndPassword(User user);
 }

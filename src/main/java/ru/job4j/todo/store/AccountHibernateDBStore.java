@@ -7,7 +7,9 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
+import ru.job4j.todo.exception.UserWithSameLoginAlreadyExistsException;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.model.UserWithoutPassword;
 import ru.job4j.todo.service.LoggerService;
 
 import java.util.ArrayList;
@@ -37,11 +39,25 @@ public class AccountHibernateDBStore implements AccountStore, AutoCloseable {
             if (transaction != null) {
                 transaction.rollback();
             }
+            if (e.getMessage().
+                    contains("org.hibernate.exception.ConstraintViolationException: ")) {
+                throw new UserWithSameLoginAlreadyExistsException("User with login <"
+                + user.getLogin()
+                + "> already exists.");
+            }
             LoggerService.LOGGER.error("Exception in AccountHibernateDBStore.add method", e);
         } finally {
             session.close();
         }
+        secureUserPassword(user);
         return user;
+    }
+
+    private void secureUserPassword(User user) {
+        char[] password = user.getPassword();
+        for (int i = 0; i < password.length; i++) {
+            password[i] = '@';
+        }
     }
 
     /**
@@ -49,9 +65,6 @@ public class AccountHibernateDBStore implements AccountStore, AutoCloseable {
      */
     @Override
     public boolean update(User user) {
-        if (!verify(user)) {
-            return false;
-        }
         boolean result = false;
         Session session = sessionFactory.openSession();
         Transaction transaction = null;
@@ -59,8 +72,10 @@ public class AccountHibernateDBStore implements AccountStore, AutoCloseable {
             transaction = session.beginTransaction();
             int executeUpdateResult =
                     session.createQuery(
-                            "update User u set u.name = :fname, "
-                                    + "u.password = :fpassword where u.id = :fid").
+                            "update User u set "
+                                    + "u.name = :fname, "
+                                    + "u.password = :fpassword "
+                                    + "where u.id = :fid").
                             setParameter("fname", user.getName()).
                             setParameter("fpassword", user.getPassword()).
                             setParameter("fid", user.getId()).
@@ -74,36 +89,6 @@ public class AccountHibernateDBStore implements AccountStore, AutoCloseable {
                 transaction.rollback();
             }
             LoggerService.LOGGER.error("Exception in AccountHibernateDBStore.update method", e);
-        } finally {
-            session.close();
-        }
-        return result;
-    }
-
-    /**
-     * Return true if user with same LOGIN and PASSWORD fields exists in DB
-     */
-    @Override
-    public boolean verify(User user) {
-        boolean result = false;
-        Session session = sessionFactory.openSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
-            Query query =
-                    session.createQuery(
-                            "from User i where i.login = :flogin and i.password = :fpassword").
-                            setParameter("flogin", user.getLogin()).
-                            setParameter("fpassword", user.getPassword());
-            if (query.uniqueResult() != null) {
-                result = true;
-            }
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            LoggerService.LOGGER.error("Exception in AccountHibernateDBStore.verify method", e);
         } finally {
             session.close();
         }
@@ -142,8 +127,7 @@ public class AccountHibernateDBStore implements AccountStore, AutoCloseable {
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
-            @SuppressWarnings("unchecked")
-            Query<User> query = session.createQuery("from User u order by u.id");
+            Query<UserWithoutPassword> query = session.createQuery("from User u order by u.id");
             result.addAll(query.list());
             transaction.commit();
         } catch (Exception e) {
@@ -169,7 +153,7 @@ public class AccountHibernateDBStore implements AccountStore, AutoCloseable {
                             "from User i where i.id = :fid").
                             setParameter("fid", id);
             if (query.uniqueResult() != null) {
-                result = Optional.of((User) query.uniqueResult());
+                result = Optional.of((UserWithoutPassword) query.uniqueResult());
             }
             transaction.commit();
         } catch (Exception e) {
@@ -177,6 +161,34 @@ public class AccountHibernateDBStore implements AccountStore, AutoCloseable {
                 transaction.rollback();
             }
             LoggerService.LOGGER.error("Exception in AccountHibernateDBStore.findById method", e);
+        } finally {
+            session.close();
+        }
+        return result;
+    }
+
+    @Override
+    public Optional<UserWithoutPassword> findByLoginAndPassword(User user) {
+        Optional<UserWithoutPassword> result = Optional.empty();
+        Session session = sessionFactory.openSession();
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            Query query =
+                    session.createQuery(
+                            "from User u where u.login = :flogin and u.password = :fpassword").
+                            setParameter("flogin", user.getLogin()).
+                            setParameter("fpassword", user.getPassword());
+            if (query.uniqueResult() != null) {
+                result = Optional.of((UserWithoutPassword) query.uniqueResult());
+            }
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            LoggerService.LOGGER.error(
+                    "Exception in AccountHibernateDBStore.findByLoginAndPassword method", e);
         } finally {
             session.close();
         }
