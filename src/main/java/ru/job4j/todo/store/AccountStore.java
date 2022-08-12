@@ -5,17 +5,17 @@ import ru.job4j.todo.model.User;
 import java.util.List;
 import java.util.Optional;
 
-public interface AccountStore extends AutoCloseable {
+public interface AccountStore<T extends User> extends AutoCloseable {
 
-    User add(User user);
+    T add(T user);
 
-    boolean update(User users);
+    boolean update(T users);
 
-    boolean delete(User user);
+    boolean delete(T user);
 
-    List<? extends User> findAll();
+    List<T> findAll();
 
-    Optional<? extends User> findById(int id);
+    Optional<T> findById(int id);
 
-    Optional<? extends User> findByLoginAndPassword(User user);
+    Optional<T> findByLoginAndPassword(T user);
 }

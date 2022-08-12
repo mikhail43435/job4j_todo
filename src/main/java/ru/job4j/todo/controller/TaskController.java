@@ -44,30 +44,40 @@ public class TaskController {
                                 name = "mode",
                                 defaultValue = "0",
                                 required = false) String mode) {
-        String headerText;
         int modeIntValue;
-        List<Task> list;
+
         try {
             modeIntValue = Integer.parseInt(mode);
         } catch (Exception e) {
             modeIntValue = 0;
         }
-        if (modeIntValue == 1) {
-            headerText = "New tasks";
-            list = taskService.findAllWithCertainStatus(1);
-        } else if (modeIntValue == 2) {
-            headerText = "Finished tasks";
-            list = taskService.findAllWithCertainStatus(2);
-        } else {
-            headerText = "All tasks";
-            list = taskService.findAll();
-        }
-
-        model.addAttribute("tasks", list);
-        model.addAttribute("HeaderText", headerText);
+        model.addAttribute("tasks", getListOfTasksWithCertainMode(modeIntValue));
+        model.addAttribute("HeaderText", getHeader(modeIntValue));
         model.addAttribute("TaskStatusHandler", taskStatusHandler);
         model.addAttribute("user", userHandler.handleUserOfCurrentSession(session));
         return "tasks";
+    }
+
+    private List<Task> getListOfTasksWithCertainMode(int mode) {
+        List<Task> result;
+        if (mode == 1) {
+            result = taskService.findAllWithCertainStatus(1);
+        } else if (mode == 2) {
+            result = taskService.findAllWithCertainStatus(2);
+        } else {
+            result = taskService.findAll();
+        }
+        return result;
+    }
+
+    private String getHeader(int mode) {
+        if (mode == 1) {
+            return "New tasks";
+        } else if (mode == 2) {
+            return "Finished tasks";
+        } else {
+            return "All tasks";
+        }
     }
 
     @GetMapping("/showTask/{taskId}")

@@ -31,7 +31,7 @@
         <div class="navbar-nav nav-pills">
             <a class="nav-item nav-link" href="/tasks">Tasks</a>
             <a class="nav-item nav-link" href="/createTask">Create task </a>
-            <a class="nav-item nav-link" href="/users">Users </a>
+            <a class="nav-item nav-link active" href="#">Users <span class="sr-only">(current)</span></a>
             <a class="nav-item nav-link" th:if="${user.id == -1}" th:href="@{/loginUser}">
                 <span th:text="${user.name}"></span>
                 <span> | Login</span>
@@ -43,32 +43,30 @@
         </div>
     </div>
 </nav>
-<div class="container pt-3">
+<br>
+<div class="container">
+    <h4 class="mb-3">[(${HeaderText})]</h4>
+</div>
+<div class="container">
     <div class="row">
-        <div class="card" style="width: 100%">
-            <div class="card-header">
-                Task details
-            </div>
-            <div class="card-body">
-                <label>Id: <span th:text="${task.id}"></span></label><br>
-                <label>Name: <span th:text="${task.name}"></span></label><br>
-                <label>Description: <span th:text="${task.description}"></span></label><br>
-                <label>Created: <span th:text="${task.created}"></span></label><br>
-                <label>Status: <span th:text="${TaskStatusHandler.getStatusString(task.status)}"></span></label>
-            </div>
-        </div>
-    </div>
-    <br>
-    <div>
-        <td><a th:if="${task.status == 1}" th:href="@{|/markTask/${task.id}/2|}">
-            <button type="submit" class="btn btn-primary">Mark as done</button>
-        </a></td>
-        <td><a th:if="${task.status == 1}" th:href="@{|/editTask/${task.id}|}">
-            <button type="submit" class="btn btn-primary">Edit</button>
-        </a></td>
-        <td><a th:href="@{|/deleteTask/${task.id}|}">
-            <button type="submit" class="btn btn-primary">Delete</button>
-        </a></td>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Login</th>
+                <th scope="col">Password</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user: ${users}">
+                <td th:text="${user.id}"></td>
+                <td th:text="${user.name}"></td>
+                <td th:text="${user.login}"></td>
+                <td th:text="${user.password}"></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 </body>

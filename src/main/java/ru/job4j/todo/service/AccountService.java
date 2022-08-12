@@ -14,18 +14,18 @@ import java.util.Optional;
 
 @ThreadSafe
 @Service
-public class AccountService {
+public class AccountService<T extends User> {
 
-    private final AccountHibernateDBStore store;
+    private final AccountHibernateDBStore<T> store;
     private final ValidationService validationService;
 
-    public AccountService(AccountHibernateDBStore store,
+    public AccountService(AccountHibernateDBStore<T> store,
                           ValidationService validationService) {
         this.store = store;
         this.validationService = validationService;
     }
 
-    public User add(User user) {
+    public T add(T user) {
         validateUserFields(user);
         try {
             store.add(user);
@@ -38,7 +38,7 @@ public class AccountService {
         return user;
     }
 
-    private void validateUserFields(User user) {
+    private void validateUserFields(T user) {
         String validationResult = validationService.validateUserName(user.getName());
         if (!validationResult.isEmpty()) {
             throw new InvalidUserPropertyException(validationResult);
@@ -53,7 +53,7 @@ public class AccountService {
         }
     }
 
-    public boolean update(User user) {
+    public boolean update(T user) {
         if (!store.findByLoginAndPassword(user).isPresent()) {
             throw new UpdateUserException("Error occurred while updating user data. "
                     + "User with specified login/password not found.");
@@ -61,19 +61,19 @@ public class AccountService {
         return store.update(user);
     }
 
-    public boolean delete(User user) {
+    public boolean delete(T user) {
         return store.delete(user);
     }
 
-    public List<User> findAll() {
+    public List<T> findAll() {
         return store.findAll();
     }
 
-    public Optional<User> findById(int id) {
+    public Optional<T> findById(int id) {
         return store.findById(id);
     }
 
-    public Optional<? extends User> findByLoginAndPassword(User user) {
+    public Optional<T> findByLoginAndPassword(T user) {
         return store.findByLoginAndPassword(user);
     }
 

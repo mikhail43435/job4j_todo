@@ -3,12 +3,16 @@ package ru.job4j.todo.model;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(name = "users")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class User implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -9056190074736140027L;
     @Id
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
     private int id;
@@ -84,7 +88,7 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "User{id=" + id
+        return "User {id=" + id
                 + ", name='" + name + '\''
                 + ", login='" + login + '\''
                 + ", password=*hidden*'" + '\''

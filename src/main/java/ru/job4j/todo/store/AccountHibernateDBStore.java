@@ -9,7 +9,6 @@ import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.exception.UserWithSameLoginAlreadyExistsException;
 import ru.job4j.todo.model.User;
-import ru.job4j.todo.model.UserWithoutPassword;
 import ru.job4j.todo.service.LoggerService;
 
 import java.util.ArrayList;
@@ -17,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class AccountHibernateDBStore implements AccountStore, AutoCloseable {
+public class AccountHibernateDBStore<T extends User>  implements AccountStore<T>, AutoCloseable {
 
     private final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
             .configure().build();
@@ -28,7 +27,7 @@ public class AccountHibernateDBStore implements AccountStore, AutoCloseable {
     }
 
     @Override
-    public User add(User user) {
+    public T add(T user) {
         Session session = sessionFactory.openSession();
         Transaction transaction = null;
         try {
@@ -49,22 +48,14 @@ public class AccountHibernateDBStore implements AccountStore, AutoCloseable {
         } finally {
             session.close();
         }
-        secureUserPassword(user);
         return user;
     }
 
-    private void secureUserPassword(User user) {
-        char[] password = user.getPassword();
-        for (int i = 0; i < password.length; i++) {
-            password[i] = '@';
-        }
-    }
-
-    /**
+     /**
      * Update only NAME and PASSWORD fields after verification that such user exists
      */
     @Override
-    public boolean update(User user) {
+      public boolean update(T user) {
         boolean result = false;
         Session session = sessionFactory.openSession();
         Transaction transaction = null;
@@ -96,7 +87,7 @@ public class AccountHibernateDBStore implements AccountStore, AutoCloseable {
     }
 
     @Override
-    public boolean delete(User user) {
+    public boolean delete(T user) {
         boolean result = false;
         Session session = sessionFactory.openSession();
         Transaction transaction = null;
@@ -121,14 +112,17 @@ public class AccountHibernateDBStore implements AccountStore, AutoCloseable {
     }
 
     @Override
-    public List<User> findAll() {
-        List<User> result = new ArrayList<>();
+    public List<T> findAll() {
+        List<T> result = new ArrayList<>();
         Session session = sessionFactory.openSession();
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
-            Query<UserWithoutPassword> query = session.createQuery("from User u order by u.id");
-            result.addAll(query.list());
+            Query query = session.createQuery("from User u order by u.id");
+            //result.addAll(query.list());
+            for (Object o : query.list()) {
+                result.add((T) o);
+            }
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
@@ -138,12 +132,14 @@ public class AccountHibernateDBStore implements AccountStore, AutoCloseable {
         } finally {
             session.close();
         }
+        //System.out.println("00000000000000000000");
+        //System.out.println(result.toString());
         return result;
     }
 
     @Override
-    public Optional<User> findById(int id) {
-        Optional<User> result = Optional.empty();
+    public Optional<T> findById(int id) {
+        Optional<T> result = Optional.empty();
         Session session = sessionFactory.openSession();
         Transaction transaction = null;
         try {
@@ -153,7 +149,7 @@ public class AccountHibernateDBStore implements AccountStore, AutoCloseable {
                             "from User i where i.id = :fid").
                             setParameter("fid", id);
             if (query.uniqueResult() != null) {
-                result = Optional.of((UserWithoutPassword) query.uniqueResult());
+                result = Optional.of((T) query.uniqueResult());
             }
             transaction.commit();
         } catch (Exception e) {
@@ -168,8 +164,8 @@ public class AccountHibernateDBStore implements AccountStore, AutoCloseable {
     }
 
     @Override
-    public Optional<UserWithoutPassword> findByLoginAndPassword(User user) {
-        Optional<UserWithoutPassword> result = Optional.empty();
+    public Optional<T> findByLoginAndPassword(T user) {
+        Optional<T> result = Optional.empty();
         Session session = sessionFactory.openSession();
         Transaction transaction = null;
         try {
@@ -180,7 +176,7 @@ public class AccountHibernateDBStore implements AccountStore, AutoCloseable {
                             setParameter("flogin", user.getLogin()).
                             setParameter("fpassword", user.getPassword());
             if (query.uniqueResult() != null) {
-                result = Optional.of((UserWithoutPassword) query.uniqueResult());
+                result = Optional.of((T) query.uniqueResult());
             }
             transaction.commit();
         } catch (Exception e) {

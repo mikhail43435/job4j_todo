@@ -3,13 +3,15 @@ package ru.job4j.todo.model;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 
 @Entity
-@Table(name = "users")
 public class UserWithoutPassword extends User implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -2442263446060784162L;
     @Id
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
     private int id;
@@ -31,7 +33,7 @@ public class UserWithoutPassword extends User implements Serializable {
         this.id = id;
         this.name = name;
         this.login = login;
-        this.password = password;
+        this.password = new char[0];
     }
 
     public int getId() {
@@ -85,7 +87,7 @@ public class UserWithoutPassword extends User implements Serializable {
 
     @Override
     public String toString() {
-        return "User{id=" + id
+        return "UserWithoutPassword {id=" + id
                 + ", name='" + name + '\''
                 + ", login='" + login + '\''
                 + ", password=" + Arrays.toString(password) + '\''

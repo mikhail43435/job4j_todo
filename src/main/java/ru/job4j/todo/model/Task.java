@@ -4,6 +4,7 @@ package ru.job4j.todo.model;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -11,6 +12,8 @@ import java.util.Objects;
 @Entity
 @Table(name = "tasks")
 public class Task implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 7786678289294385854L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;

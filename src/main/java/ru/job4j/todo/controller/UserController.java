@@ -1,6 +1,8 @@
 package ru.job4j.todo.controller;
 
 import net.jcip.annotations.ThreadSafe;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +11,8 @@ import ru.job4j.todo.exception.UserWithSameLoginAlreadyExistsException;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.model.UserWithoutPassword;
 import ru.job4j.todo.service.AccountService;
+import ru.job4j.todo.service.SecurityService;
+import ru.job4j.todo.store.AccountHibernateDBStore;
 import ru.job4j.todo.util.UserHandler;
 
 import javax.servlet.http.HttpSession;
@@ -18,12 +22,18 @@ import java.util.Optional;
 @Controller
 public class UserController {
 
-    private final AccountService accountService;
+    private final AccountService<User> accountService;
+    private final AccountService<UserWithoutPassword> accountServiceSafeMode;
+    private final SecurityService securityService;
     private final UserHandler userHandler;
 
-    public UserController(AccountService accountService,
+    public UserController(AccountService<User> accountService,
+                          AccountService<UserWithoutPassword> accountServiceSafeMode,
+                          SecurityService securityService,
                           UserHandler userHandler) {
         this.accountService = accountService;
+        this.accountServiceSafeMode = accountServiceSafeMode;
+        this.securityService = securityService;
         this.userHandler = userHandler;
     }
 
@@ -41,12 +51,13 @@ public class UserController {
                                 HttpSession session,
                                 @ModelAttribute User user) {
 
-        Optional<UserWithoutPassword> userFound =
-                (Optional<UserWithoutPassword>) accountService.findByLoginAndPassword(user);
-        if (!userFound.isPresent()) {
+        Optional<User> userFoundOptional = accountService.findByLoginAndPassword(user);
+        if (userFoundOptional.isEmpty()) {
             return "redirect:/loginUser?fail=true";
         }
-        session.setAttribute("user", userFound.get());
+        securityService.wipeUserPassword(user);
+        securityService.wipeUserPassword(userFoundOptional.get());
+        session.setAttribute("user", userFoundOptional.get());
         return "redirect:/tasks";
     }
 
@@ -88,10 +99,34 @@ public class UserController {
                     "errorMessage",
                     "An database error occurred. " + e.getMessage());
             return redirectString;
+        } finally {
+            securityService.wipeUserPassword(user);
         }
         session.setAttribute("user", user);
         model.addAttribute("user", userHandler.handleUserOfCurrentSession(session));
         return "registrationUser";
+    }
+
+    @GetMapping("/users")
+    public String users(Model model,
+                        HttpSession session) {
+        model.addAttribute("HeaderText", "List of users");
+        model.addAttribute("users", accountServiceSafeMode.findAll());
+/*        System.out.println("--------------------");
+        System.out.println(accountServiceSafeMode.findById(1));
+        System.out.println(accountServiceSafeMode.findAll().toString());
+        System.out.println(accountService.findAll().toString());*/
+        model.addAttribute("user", userHandler.handleUserOfCurrentSession(session));
+
+/*        AccountHibernateDBStore<UserWithoutPassword> store1 =
+                new AccountHibernateDBStore<>(new
+                        MetadataSources(new StandardServiceRegistryBuilder()
+                        .configure().build()).
+                buildMetadata().
+                buildSessionFactory());
+        System.out.println((store1.findAll()));*/
+
+        return "users";
     }
 
 /*    @ExceptionHandler({Exception.class})
