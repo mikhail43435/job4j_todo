@@ -108,8 +108,8 @@ class AccountHibernateDBStoreWithoutPassTest {
         List<UserWithoutPassword> listOfNewUsers = List.of(userToAdd1, userToAdd2, userToAdd3);
         listOfAllUsers.addAll(listOfNewUsers);
         assertThat(store.findAll()).isEqualTo(listOfAllUsers);
-        System.out.println("tttttttttttttttttttttttttttttttttt");
-        System.out.println(store.findAll().toString());
+        System.out.println(store.findAll());
+
     }
 
     @Test
@@ -133,7 +133,6 @@ class AccountHibernateDBStoreWithoutPassTest {
         assertThat(userFromDBAfterUpdate.get().getId()).isEqualTo(userToUpdate.getId());
         assertThat(userFromDBAfterUpdate.get().getName()).isEqualTo(userToUpdate.getName());
         assertThat(userFromDBAfterUpdate.get().getPassword()).isEqualTo(userToUpdate.getPassword());
-        System.out.println(store.findAll());
     }
 
     @Test

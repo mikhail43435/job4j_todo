@@ -6,6 +6,7 @@ import org.hibernate.Transaction;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.query.Query;
+import org.springframework.core.GenericTypeResolver;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.exception.UserWithSameLoginAlreadyExistsException;
 import ru.job4j.todo.model.User;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class AccountHibernateDBStore<T extends User>  implements AccountStore<T>, AutoCloseable {
+public class AccountHibernateDBStore<T extends User> implements AccountStore<T>, AutoCloseable {
 
     private final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
             .configure().build();
@@ -24,6 +25,14 @@ public class AccountHibernateDBStore<T extends User>  implements AccountStore<T>
 
     public AccountHibernateDBStore(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
+    }
+
+    public void showGenericType() {
+        Class<T> springGenericType = (Class<T>) GenericTypeResolver.resolveTypeArgument(getClass(),
+                AccountHibernateDBStore.class);
+        System.out.print("=============== AccountHibernateDBStore generic type >>> ");
+        System.out.println(springGenericType);
+
     }
 
     @Override
@@ -41,8 +50,8 @@ public class AccountHibernateDBStore<T extends User>  implements AccountStore<T>
             if (e.getMessage().
                     contains("org.hibernate.exception.ConstraintViolationException: ")) {
                 throw new UserWithSameLoginAlreadyExistsException("User with login <"
-                + user.getLogin()
-                + "> already exists.");
+                        + user.getLogin()
+                        + "> already exists.");
             }
             LoggerService.LOGGER.error("Exception in AccountHibernateDBStore.add method", e);
         } finally {
@@ -51,11 +60,11 @@ public class AccountHibernateDBStore<T extends User>  implements AccountStore<T>
         return user;
     }
 
-     /**
+    /**
      * Update only NAME and PASSWORD fields after verification that such user exists
      */
     @Override
-      public boolean update(T user) {
+    public boolean update(T user) {
         boolean result = false;
         Session session = sessionFactory.openSession();
         Transaction transaction = null;
@@ -119,7 +128,7 @@ public class AccountHibernateDBStore<T extends User>  implements AccountStore<T>
         try {
             transaction = session.beginTransaction();
             Query query = session.createQuery("from User u order by u.id");
-            //result.addAll(query.list());
+            /*result.addAll(query.list());*/
             for (Object o : query.list()) {
                 result.add((T) o);
             }
@@ -132,8 +141,9 @@ public class AccountHibernateDBStore<T extends User>  implements AccountStore<T>
         } finally {
             session.close();
         }
-        //System.out.println("00000000000000000000");
-        //System.out.println(result.toString());
+        showGenericType();
+        System.out.println("==================== findAll method ====================");
+        System.out.println(result.toString());
         return result;
     }
 

@@ -1,7 +1,5 @@
 package ru.job4j.todo.model;
 
-import com.sun.istack.NotNull;
-
 import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
@@ -14,17 +12,16 @@ public class User implements Serializable {
     @Serial
     private static final long serialVersionUID = -9056190074736140027L;
     @Id
-    @GeneratedValue(strategy =  GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @NotNull
+    @Column(nullable = false)
     private String name;
 
-    @Column(unique = true)
-    @NotNull
+    @Column(nullable = false, unique = true)
     private String login;
 
-    @NotNull
+    @Column(nullable = false)
     private char[] password;
 
     public User() {
@@ -91,7 +88,7 @@ public class User implements Serializable {
         return "User {id=" + id
                 + ", name='" + name + '\''
                 + ", login='" + login + '\''
-                + ", password=*hidden*'" + '\''
+                + ", password=" + password + '\''
                 + '}';
     }
 }

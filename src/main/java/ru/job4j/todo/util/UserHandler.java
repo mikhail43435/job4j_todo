@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.job4j.todo.model.User;
 
 import javax.servlet.http.HttpSession;
+
 @Service
 @ThreadSafe
 public class UserHandler {

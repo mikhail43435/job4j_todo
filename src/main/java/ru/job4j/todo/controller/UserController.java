@@ -1,28 +1,31 @@
 package ru.job4j.todo.controller;
 
 import net.jcip.annotations.ThreadSafe;
-import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.job4j.todo.exception.UserWithSameLoginAlreadyExistsException;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.model.UserWithoutPassword;
 import ru.job4j.todo.service.AccountService;
 import ru.job4j.todo.service.SecurityService;
-import ru.job4j.todo.store.AccountHibernateDBStore;
 import ru.job4j.todo.util.UserHandler;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 import java.util.Optional;
 
 @ThreadSafe
 @Controller
 public class UserController {
-
+    @Autowired
     private final AccountService<User> accountService;
+    @Autowired
     private final AccountService<UserWithoutPassword> accountServiceSafeMode;
     private final SecurityService securityService;
     private final UserHandler userHandler;
@@ -63,7 +66,7 @@ public class UserController {
 
     @GetMapping("/logoutUser")
     public String logoutUser(Model model,
-                         HttpSession session) {
+                             HttpSession session) {
         session.invalidate();
         return "redirect:/tasks";
     }
@@ -74,7 +77,7 @@ public class UserController {
                                       @RequestParam(name = "fail", required = false) Boolean fail,
                                       @RequestParam(name = "errorMessage",
                                               defaultValue = "") String errorMessage) {
-
+        session.invalidate();
         model.addAttribute("fail", fail != null);
         model.addAttribute("errorMessage", errorMessage);
         model.addAttribute("user", userHandler.handleUserOfCurrentSession(session));
@@ -104,7 +107,7 @@ public class UserController {
         }
         session.setAttribute("user", user);
         model.addAttribute("user", userHandler.handleUserOfCurrentSession(session));
-        return "registrationUser";
+        return "redirect:/tasks";
     }
 
     @GetMapping("/users")
@@ -112,26 +115,16 @@ public class UserController {
                         HttpSession session) {
         model.addAttribute("HeaderText", "List of users");
         model.addAttribute("users", accountServiceSafeMode.findAll());
-/*        System.out.println("--------------------");
-        System.out.println(accountServiceSafeMode.findById(1));
-        System.out.println(accountServiceSafeMode.findAll().toString());
-        System.out.println(accountService.findAll().toString());*/
         model.addAttribute("user", userHandler.handleUserOfCurrentSession(session));
 
-/*        AccountHibernateDBStore<UserWithoutPassword> store1 =
-                new AccountHibernateDBStore<>(new
-                        MetadataSources(new StandardServiceRegistryBuilder()
-                        .configure().build()).
-                buildMetadata().
-                buildSessionFactory());
-        System.out.println((store1.findAll()));*/
+        System.out.println(">>> Request through accountService");
+        List<User> userList = accountService.findAll();
+        System.out.println(userList);
+
+        System.out.println(">>> Request through accountServiceSafeMode");
+        List<UserWithoutPassword> userWithoutPasswordList = accountServiceSafeMode.findAll();
+        System.out.println(userWithoutPasswordList);
 
         return "users";
     }
-
-/*    @ExceptionHandler({Exception.class})
-    public String handleException(Exception e, Model model) {
-        LoggerService.LOGGER.error("Exception in AccountService.java", e);
-        return "redirect:/error";
-    }*/
 }

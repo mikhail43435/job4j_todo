@@ -113,7 +113,6 @@ class AccountHibernateDBStoreTest {
         assertThat(userFromDBAfterUpdate.get().getId()).isEqualTo(userToUpdate.getId());
         assertThat(userFromDBAfterUpdate.get().getName()).isEqualTo(userToUpdate.getName());
         assertThat(userFromDBAfterUpdate.get().getPassword()).isEqualTo(userToUpdate.getPassword());
-        System.out.println(store.findAll());
     }
 
     @Test
@@ -164,8 +163,6 @@ class AccountHibernateDBStoreTest {
         Optional<User> userFromDB = store.findById(userWithoutPassword.getId());
 
         assertThat(userFromDB).isPresent();
-        //System.out.println("999999999999999999999999999999999999999999999999999999999");
-        //System.out.println(userFromDB.get().getClass().getName());
         assertThat(userFromDB.get().getId()).isEqualTo(userToAdd.getId());
         assertThat(userFromDB.get().getName()).isEqualTo(userToAdd.getName());
         assertThat(userFromDB.get().getLogin()).isEqualTo(userToAdd.getLogin());
