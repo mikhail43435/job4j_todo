@@ -2,59 +2,69 @@ package ru.job4j.todo.service;
 
 import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Service;
+import ru.job4j.todo.exception.InvalidUserPropertyException;
+
+import java.util.Optional;
 
 @Service
 @ThreadSafe
 public class ValidationService {
 
-    public String validateTaskName(String taskName) {
+    public Optional<IllegalArgumentException> validateTaskName(String taskName) {
+        Optional<IllegalArgumentException> result = Optional.empty();
         if (taskName.isBlank()) {
-            return "Invalid task name: <"
+            result = Optional.of(new IllegalArgumentException("Invalid task name: <"
                     + taskName
-                    + "> The task's name cannot contain spaces only.";
+                    + "> The task's name cannot be blank."));
         } else if (taskName.length() < 1 || taskName.length() > 255) {
-            return "Invalid task name: <"
+            result = Optional.of(new IllegalArgumentException("Invalid task name: <"
                     + taskName
-                    + "> The length of the task's name must be in the range 1 - 255 .";
+                    + "> The length of the task's name must be in the range 1 - 255 ."));
         }
-        return "";
+        return result;
     }
 
-    public String validateUserName(String userName) {
+    public Optional<InvalidUserPropertyException> validateUserName(String userName) {
+        Optional<InvalidUserPropertyException> result = Optional.empty();
         if (userName.isBlank()) {
-            return "Invalid user name: <"
+            return Optional.of(new InvalidUserPropertyException("Invalid user name: <"
                     + userName
-                    + "> The user's name can not contain spaces only.";
+                    + "> The user's name can not contain spaces only."));
         } else if (userName.length() < 1 || userName.length() > 100) {
-            return "Invalid user name: <"
+            return Optional.of(new InvalidUserPropertyException("Invalid user name: <"
                     + userName
-                    + "> The length of the user's name must be in the range 1 - 255 .";
+                    + "> The length of the user's name must be in the range 1 - 255 ."));
         }
-        return "";
+        return result;
     }
 
-    public String validateUserLogin(String userLogin) {
+    public Optional<InvalidUserPropertyException> validateUserLogin(String userLogin) {
+        Optional<InvalidUserPropertyException> result = Optional.empty();
         if (userLogin.isBlank()) {
-            return "Invalid login: <"
+            result = Optional.of(new InvalidUserPropertyException("Invalid login: <"
                     + userLogin
-                    + "> The login can not contain spaces only.";
+                    + "> The login can not contain spaces only."));
         } else if (userLogin.length() < 1 || userLogin.length() > 100) {
-            return "Invalid user name: <"
+            result = Optional.of(new InvalidUserPropertyException("Invalid user name: <"
                     + userLogin
-                    + "> The length login must be in the range 1 - 255 .";
+                    + "> The length login must be in the range 1 - 255 ."));
         }
-        return "";
+        return result;
     }
 
-    public String validateUserPassword(char[] userPassword) {
+    public Optional<InvalidUserPropertyException> validateUserPassword(char[] userPassword) {
+        Optional<InvalidUserPropertyException> result = Optional.empty();
         if (userPassword.length < 1 || userPassword.length > 100) {
-            return "Invalid password length.The password length must be in 1-100 range.";
+            return Optional.of(new InvalidUserPropertyException("Invalid password length.The "
+                    + "password length must be in 1-100 range."));
         }
         for (char ch : userPassword) {
             if (!(Character.isLetter(ch) || Character.isDigit(ch))) {
-                return "Invalid password. Password must contain only digits and letters.";
+                result = Optional.of(new InvalidUserPropertyException("Invalid password. "
+                        + "Password must contain only digits and letters."));
+                break;
             }
         }
-        return "";
+        return result;
     }
 }

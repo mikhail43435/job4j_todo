@@ -1,27 +1,30 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-            integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-            integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" rel="stylesheet">
+    <script crossorigin="anonymous"
+            integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+            src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+    <script crossorigin="anonymous"
+            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+            src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script crossorigin="anonymous"
+            integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+            src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 
     <title>TODO</title>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">TODO</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
-            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <button aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
+            data-target="#navbarNavAltMarkup" data-toggle="collapse" type="button">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
@@ -29,11 +32,11 @@
             <a class="nav-item nav-link" href="/tasks">Tasks</a>
             <a class="nav-item nav-link" href="/createTask">Create task </a>
             <a class="nav-item nav-link" href="/users">Users </a>
-            <a class="nav-item nav-link" th:if="${user.id == -1}" th:href="@{/loginUser}">
+            <a class="nav-item nav-link" th:href="@{/loginUser}" th:if="${user.id == -1}">
                 <span th:text="${user.name}"></span>
                 <span> | Login</span>
             </a>
-            <a class="nav-item nav-link" th:if="${user.id != -1}" th:href="@{/logoutUser}">
+            <a class="nav-item nav-link" th:href="@{/logoutUser}" th:if="${user.id != -1}">
                 <span th:text="${user.name}"></span>
                 <span> | Logout</span>
             </a>
@@ -47,24 +50,24 @@
                 User registration
             </div>
             <div class="card-body">
-                <div th:if="${fail}" class="alert alert-danger" role="alert">
+                <div class="alert alert-danger" role="alert" th:if="${fail}">
                     <label><span th:text="${errorMessage}"></span></label>
                 </div>
-                <form th:action="@{/registrationUser}" method="POST" enctype="multipart/form-data">
-                    <input type="hidden" name="id" value="0"/>
+                <form enctype="multipart/form-data" method="POST" th:action="@{/registrationUser}">
+                    <input name="id" type="hidden" value="0"/>
                     <div class="form-group">
                         <label>Name</label>
-                        <input type="text" class="form-control" name="name" id="name">
+                        <input class="form-control" id="name" name="name" type="text">
                     </div>
                     <div class="form-group">
                         <label>Login</label>
-                        <input type="text" class="form-control" name="login" id="login">
+                        <input class="form-control" id="login" name="login" type="text">
                     </div>
                     <div class="form-group">
                         <label>Password</label>
-                        <input type="text" class="form-control" name="password" id="password">
+                        <input class="form-control" id="password" name="password" type="text">
                     </div>
-                    <button type="submit" class="btn btn-primary">Register</button>
+                    <button class="btn btn-primary" type="submit">Register</button>
                 </form>
             </div>
         </div>

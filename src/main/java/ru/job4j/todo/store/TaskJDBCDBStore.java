@@ -4,6 +4,7 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.exception.AddNewTaskException;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.model.TaskStatus;
 import ru.job4j.todo.service.LoggerService;
 
 import java.sql.Date;
@@ -32,7 +33,7 @@ public class TaskJDBCDBStore implements TasksStore {
                      connection.prepareStatement(param, PreparedStatement.RETURN_GENERATED_KEYS)) {
             prepareStatement.setString(1, task.getName());
             prepareStatement.setString(2, task.getDescription());
-            prepareStatement.setInt(3, task.getStatus());
+            prepareStatement.setObject(3, task.getStatus().name());
             prepareStatement.setDate(4, Date.valueOf(task.getCreated()));
             prepareStatement.execute();
             try (ResultSet resultSet = prepareStatement.getGeneratedKeys()) {
@@ -58,7 +59,7 @@ public class TaskJDBCDBStore implements TasksStore {
                      + "WHERE id = ?")) {
             prepareStatement.setString(1, task.getName());
             prepareStatement.setString(2, task.getDescription());
-            prepareStatement.setInt(3, task.getStatus());
+            prepareStatement.setObject(3, task.getStatus().name());
             prepareStatement.setInt(4, task.getId());
             prepareStatement.execute();
             result = true;
@@ -96,7 +97,7 @@ public class TaskJDBCDBStore implements TasksStore {
                             new Task(resultSet.getInt("id"),
                                     resultSet.getString("name"),
                                     resultSet.getString("description"),
-                                    resultSet.getInt("status"),
+                                    TaskStatus.valueOf(resultSet.getString("status")),
                                     LocalDate.ofInstant(
                                             resultSet.getTimestamp("created").toInstant(),
                                             ZoneId.systemDefault())
@@ -120,7 +121,7 @@ public class TaskJDBCDBStore implements TasksStore {
                     result.add(new Task(resultSet.getInt("id"),
                             resultSet.getString("name"),
                             resultSet.getString("description"),
-                            resultSet.getInt("status"),
+                            TaskStatus.valueOf(resultSet.getString("status")),
                             LocalDate.ofInstant(
                                     resultSet.getTimestamp("created").toInstant(),
                                     ZoneId.systemDefault())
@@ -147,7 +148,7 @@ public class TaskJDBCDBStore implements TasksStore {
                     result.add(new Task(resultSet.getInt("id"),
                             resultSet.getString("name"),
                             resultSet.getString("description"),
-                            resultSet.getInt("status"),
+                            (TaskStatus) resultSet.getObject("status"),
                             LocalDate.ofInstant(
                                     resultSet.getTimestamp("created").toInstant(),
                                     ZoneId.systemDefault())

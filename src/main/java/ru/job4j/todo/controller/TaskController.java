@@ -6,9 +6,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.model.TaskStatus;
 import ru.job4j.todo.service.LoggerService;
 import ru.job4j.todo.service.TaskService;
-import ru.job4j.todo.util.TaskStatusHandler;
 import ru.job4j.todo.util.UserHandler;
 
 import javax.servlet.http.HttpSession;
@@ -20,14 +20,11 @@ import java.util.List;
 public class TaskController {
 
     private final TaskService taskService;
-    private final TaskStatusHandler taskStatusHandler;
     private final UserHandler userHandler;
 
     public TaskController(TaskService taskService,
-                          TaskStatusHandler taskStatusHandler,
                           UserHandler userHandler) {
         this.taskService = taskService;
-        this.taskStatusHandler = taskStatusHandler;
         this.userHandler = userHandler;
     }
 
@@ -53,7 +50,6 @@ public class TaskController {
         }
         model.addAttribute("tasks", getListOfTasksWithCertainMode(modeIntValue));
         model.addAttribute("HeaderText", getHeader(modeIntValue));
-        model.addAttribute("TaskStatusHandler", taskStatusHandler);
         model.addAttribute("user", userHandler.handleUserOfCurrentSession(session));
         return "tasks";
     }
@@ -85,7 +81,8 @@ public class TaskController {
                            HttpSession session,
                            @PathVariable("taskId") int id) {
         model.addAttribute("task", taskService.findById(id).get());
-        model.addAttribute("TaskStatusHandler", taskStatusHandler);
+        model.addAttribute("TaskStatusFINISHED", TaskStatus.FINISHED);
+        model.addAttribute("TaskStatusNEW", TaskStatus.NEW);
         model.addAttribute("user", userHandler.handleUserOfCurrentSession(session));
         return "showTask";
     }
@@ -109,7 +106,7 @@ public class TaskController {
                                  HttpSession session,
                                  @ModelAttribute Task task,
                                  RedirectAttributes redirectAttributes) {
-        task.setStatus(1);
+        task.setStatus(TaskStatus.NEW);
         task.setCreated(LocalDate.now());
         try {
             taskService.add(task);
@@ -124,12 +121,13 @@ public class TaskController {
     public String markTask(Model model,
                            HttpSession session,
                            @PathVariable("taskId") int id,
-                           @PathVariable("status") int status) {
+                           @PathVariable("status") TaskStatus status) {
         Task task = taskService.findById(id).get();
         task.setStatus(status);
         taskService.update(task);
         model.addAttribute("task", task);
-        model.addAttribute("TaskStatusHandler", taskStatusHandler);
+        model.addAttribute("TaskStatusFINISHED", TaskStatus.FINISHED);
+        model.addAttribute("TaskStatusNEW", TaskStatus.NEW);
         model.addAttribute("user", userHandler.handleUserOfCurrentSession(session));
         return "showTask";
     }
@@ -140,7 +138,7 @@ public class TaskController {
                            @PathVariable("taskId") int id) {
         Task task = taskService.findById(id).get();
         model.addAttribute("task", task);
-        model.addAttribute("statusString", taskStatusHandler.getStatusString(task.getStatus()));
+        model.addAttribute("statusString", task.getDescription());
         model.addAttribute("user", userHandler.handleUserOfCurrentSession(session));
         return "editTask";
     }

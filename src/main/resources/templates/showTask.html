@@ -3,28 +3,28 @@
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" rel="stylesheet">
+    <script crossorigin="anonymous"
             integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-            crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+            src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+    <script crossorigin="anonymous"
             integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-            crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+            src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script crossorigin="anonymous"
             integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-            crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+            src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <title>TODO</title>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">TODO</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
-            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <button aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
+            data-target="#navbarNavAltMarkup" data-toggle="collapse" type="button">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
@@ -32,11 +32,11 @@
             <a class="nav-item nav-link" href="/tasks">Tasks</a>
             <a class="nav-item nav-link" href="/createTask">Create task </a>
             <a class="nav-item nav-link" href="/users">Users </a>
-            <a class="nav-item nav-link" th:if="${user.id == -1}" th:href="@{/loginUser}">
+            <a class="nav-item nav-link" th:href="@{/loginUser}" th:if="${user.id == -1}">
                 <span th:text="${user.name}"></span>
                 <span> | Login</span>
             </a>
-            <a class="nav-item nav-link" th:if="${user.id != -1}" th:href="@{/logoutUser}">
+            <a class="nav-item nav-link" th:href="@{/logoutUser}" th:if="${user.id != -1}">
                 <span th:text="${user.name}"></span>
                 <span> | Logout</span>
             </a>
@@ -54,20 +54,20 @@
                 <label>Name: <span th:text="${task.name}"></span></label><br>
                 <label>Description: <span th:text="${task.description}"></span></label><br>
                 <label>Created: <span th:text="${task.created}"></span></label><br>
-                <label>Status: <span th:text="${TaskStatusHandler.getStatusString(task.status)}"></span></label>
+                <label>Status: <span th:text="${task.status.getDescription()}"></span></label>
             </div>
         </div>
     </div>
     <br>
     <div>
-        <td><a th:if="${task.status == 1}" th:href="@{|/markTask/${task.id}/2|}">
-            <button type="submit" class="btn btn-primary">Mark as done</button>
+        <td><a th:href="@{|/markTask/${task.id}/FINISHED|}" th:if="${task.status != TaskStatusFINISHED}">
+            <button class="btn btn-primary" type="submit">Mark as done</button>
         </a></td>
-        <td><a th:if="${task.status == 1}" th:href="@{|/editTask/${task.id}|}">
-            <button type="submit" class="btn btn-primary">Edit</button>
+        <td><a th:href="@{|/editTask/${task.id}|}" th:if="${task.status == TaskStatusNEW}">
+            <button class="btn btn-primary" type="submit">Edit</button>
         </a></td>
         <td><a th:href="@{|/deleteTask/${task.id}|}">
-            <button type="submit" class="btn btn-primary">Delete</button>
+            <button class="btn btn-primary" type="submit">Delete</button>
         </a></td>
     </div>
 </div>

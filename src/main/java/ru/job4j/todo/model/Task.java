@@ -21,8 +21,9 @@ public class Task implements Serializable {
     @Column(nullable = false)
     private String description;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private int status;
+    private TaskStatus status;
 
     @Column(nullable = false)
     private LocalDate created;
@@ -30,7 +31,7 @@ public class Task implements Serializable {
     public Task() {
     }
 
-    public Task(int id, String name, String description, int status, LocalDate created) {
+    public Task(int id, String name, String description, TaskStatus status, LocalDate created) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -62,11 +63,11 @@ public class Task implements Serializable {
         this.description = description;
     }
 
-    public int getStatus() {
+    public TaskStatus getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(TaskStatus status) {
         this.status = status;
     }
 

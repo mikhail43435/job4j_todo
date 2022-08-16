@@ -2,9 +2,9 @@
 create TABLE IF NOT EXISTS tasks
 (
     id          SERIAL PRIMARY KEY,
-    name        VARCHAR(255)  NOT NULL,
-    description VARCHAR(1000) NOT NULL,
-    status      INT           NOT NULL,
+    name        TEXT  NOT NULL,
+    description TEXT NOT NULL,
+    status      TEXT NOT NULL check (status in ('NEW', 'FINISHED', 'FOR_TEST')),
     created     TIMESTAMP     NOT NULL
 );
 
@@ -12,7 +12,7 @@ create TABLE IF NOT EXISTS tasks
 create TABLE IF NOT EXISTS users
 (
     id       SERIAL PRIMARY KEY,
-    name     VARCHAR(100),
-    login    VARCHAR(100),
-    password VARCHAR(100)
+    name     TEXT,
+    login    TEXT,
+    password TEXT
 );

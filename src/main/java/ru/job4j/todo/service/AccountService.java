@@ -26,7 +26,12 @@ public class AccountService<T extends User> {
     }
 
     public T add(T user) {
-        validateUserFields(user);
+
+        Optional<InvalidUserPropertyException> userFieldValidationResult = validateUserFields(user);
+        if (userFieldValidationResult.isPresent()) {
+            throw userFieldValidationResult.get();
+        }
+
         try {
             store.add(user);
         } catch (UserWithSameLoginAlreadyExistsException e) {
@@ -38,19 +43,22 @@ public class AccountService<T extends User> {
         return user;
     }
 
-    private void validateUserFields(T user) {
-        String validationResult = validationService.validateUserName(user.getName());
-        if (!validationResult.isEmpty()) {
-            throw new InvalidUserPropertyException(validationResult);
+    private Optional<InvalidUserPropertyException> validateUserFields(T user) {
+        Optional<InvalidUserPropertyException> validationException;
+
+        validationException = validationService.validateUserName(user.getName());
+        if (validationException.isPresent()) {
+            return validationException;
         }
-        validationResult = validationService.validateUserLogin(user.getLogin());
-        if (!validationResult.isEmpty()) {
-            throw new InvalidUserPropertyException(validationResult);
+        validationException = validationService.validateUserLogin(user.getLogin());
+        if (validationException.isPresent()) {
+            return validationException;
         }
-        validationResult = validationService.validateUserPassword(user.getPassword());
-        if (!validationResult.isEmpty()) {
-            throw new InvalidUserPropertyException(validationResult);
+        validationException = validationService.validateUserPassword(user.getPassword());
+        if (validationException.isPresent()) {
+            return validationException;
         }
+        return Optional.empty();
     }
 
     public boolean update(T user) {

@@ -23,9 +23,10 @@ public class TaskService {
     }
 
     public Task add(Task task) {
-        String validationResult = validationService.validateTaskName(task.getName());
-        if (!validationResult.isEmpty()) {
-            throw new IllegalArgumentException(validationResult);
+        Optional<IllegalArgumentException> validationResult =
+                validationService.validateTaskName(task.getName());
+        if (validationResult.isPresent()) {
+            throw validationResult.get();
         }
         try {
             store.add(task);

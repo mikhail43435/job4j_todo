@@ -1,6 +1,6 @@
 package ru.job4j.todo.model;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
 import java.io.Serializable;
 import java.util.Arrays;
 
