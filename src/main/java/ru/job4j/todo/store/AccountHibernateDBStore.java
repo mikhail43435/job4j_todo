@@ -6,7 +6,6 @@ import org.hibernate.Transaction;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.query.Query;
-import org.springframework.core.GenericTypeResolver;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.exception.UserWithSameLoginAlreadyExistsException;
 import ru.job4j.todo.model.User;
@@ -15,6 +14,7 @@ import ru.job4j.todo.service.LoggerService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 @Repository
 public class AccountHibernateDBStore<T extends User> implements AccountStore<T>, AutoCloseable {
@@ -52,9 +52,6 @@ public class AccountHibernateDBStore<T extends User> implements AccountStore<T>,
         return user;
     }
 
-    /**
-     * Update only NAME and PASSWORD fields after verification that such user exists
-     */
     @Override
     public boolean update(T user) {
         boolean result = false;
@@ -135,52 +132,49 @@ public class AccountHibernateDBStore<T extends User> implements AccountStore<T>,
 
     @Override
     public Optional<T> findById(int id) {
-        Optional<T> result = Optional.empty();
-        Session session = sessionFactory.openSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
-            Query query =
-                    session.createQuery(
-                            "from User i where i.id = :fid").
-                            setParameter("fid", id);
-            if (query.uniqueResult() != null) {
-                result = Optional.of((T) query.uniqueResult());
-            }
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            LoggerService.LOGGER.error("Exception in AccountHibernateDBStore.findById method", e);
-        } finally {
-            session.close();
-        }
-        return result;
-    }
+        T result = this.tx(
+                session -> {
+                    final Query query =
+                            session.createQuery(
+                                    "from User i where i.id = :fid").
+                                    setParameter("fid", id);
+                    return (T) query.uniqueResult();
+                }, "findById");
+        return result == null ? Optional.empty() : Optional.of(result);
+   }
 
     @Override
     public Optional<T> findByLoginAndPassword(T user) {
-        Optional<T> result = Optional.empty();
-        Session session = sessionFactory.openSession();
+        T result = this.tx(
+                session -> {
+                    final Query query =
+                            session.createQuery(
+                                    "from User u "
+                                            + "where u.login = :flogin "
+                                            + "and u.password = :fpassword").
+                                    setParameter("flogin", user.getLogin()).
+                                    setParameter("fpassword", user.getPassword());
+                    return (T) query.uniqueResult();
+                }, "findByLoginAndPassword");
+        return result == null ? Optional.empty() : Optional.of(result);
+    }
+
+    private T tx(final Function<Session, T> command, String methodName) {
+        T result = null;
+        final Session session = sessionFactory.openSession();
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
-            Query query =
-                    session.createQuery(
-                            "from User u where u.login = :flogin and u.password = :fpassword").
-                            setParameter("flogin", user.getLogin()).
-                            setParameter("fpassword", user.getPassword());
-            if (query.uniqueResult() != null) {
-                result = Optional.of((T) query.uniqueResult());
-            }
+            result = command.apply(session);
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();
             }
             LoggerService.LOGGER.error(
-                    "Exception in AccountHibernateDBStore.findByLoginAndPassword method", e);
+                    "Exception in AccountHibernateDBStore."
+                            + methodName
+                            + " method", e);
         } finally {
             session.close();
         }

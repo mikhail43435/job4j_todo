@@ -12,7 +12,6 @@ import ru.job4j.todo.service.TaskService;
 import ru.job4j.todo.util.UserHandler;
 
 import javax.servlet.http.HttpSession;
-import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 
