@@ -1,7 +1,6 @@
 package ru.job4j.todo.controller;
 
 import net.jcip.annotations.ThreadSafe;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -68,7 +67,6 @@ public class UserController {
                                       @RequestParam(name = "fail", required = false) Boolean fail,
                                       @RequestParam(name = "errorMessage",
                                               defaultValue = "") String errorMessage) {
-        //session.invalidate();
         session.setAttribute("user", null);
         model.addAttribute("fail", fail != null);
         model.addAttribute("errorMessage", errorMessage);
