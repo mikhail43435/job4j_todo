@@ -1,13 +1,14 @@
 package ru.job4j.todo.service;
 
 import net.jcip.annotations.ThreadSafe;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.job4j.todo.exception.AddNewUserException;
 import ru.job4j.todo.exception.InvalidUserPropertyException;
 import ru.job4j.todo.exception.UpdateUserException;
 import ru.job4j.todo.exception.UserWithSameLoginAlreadyExistsException;
 import ru.job4j.todo.model.User;
-import ru.job4j.todo.store.AccountHibernateDBStore;
+import ru.job4j.todo.store.AccountStore;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,10 +17,10 @@ import java.util.Optional;
 @Service
 public class AccountService<T extends User> {
 
-    private final AccountHibernateDBStore<T> store;
+    private final AccountStore<T> store;
     private final ValidationService validationService;
 
-    public AccountService(AccountHibernateDBStore<T> store,
+    public AccountService(@Qualifier("accountHibernateStore") AccountStore<T> store,
                           ValidationService validationService) {
         this.store = store;
         this.validationService = validationService;

@@ -16,26 +16,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
-public class AccountHibernateDBStore<T extends User> implements AccountStore<T>, AutoCloseable {
+public abstract class AccountHibernateDBStoreAbstract<T extends User> {
 
     private final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
             .configure().build();
     private final SessionFactory sessionFactory;
 
-    public AccountHibernateDBStore(SessionFactory sessionFactory) {
+    public AccountHibernateDBStoreAbstract(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
     public void showGenericType() {
         Class<T> springGenericType = (Class<T>) GenericTypeResolver.resolveTypeArgument(getClass(),
-                AccountHibernateDBStore.class);
+                AccountStore.class);
         System.out.print("=============== AccountHibernateDBStore generic type >>> ");
         System.out.println(springGenericType);
 
     }
 
-    @Override
     public T add(T user) {
         Session session = sessionFactory.openSession();
         Transaction transaction = null;
@@ -63,7 +61,6 @@ public class AccountHibernateDBStore<T extends User> implements AccountStore<T>,
     /**
      * Update only NAME and PASSWORD fields after verification that such user exists
      */
-    @Override
     public boolean update(T user) {
         boolean result = false;
         Session session = sessionFactory.openSession();
@@ -95,7 +92,6 @@ public class AccountHibernateDBStore<T extends User> implements AccountStore<T>,
         return result;
     }
 
-    @Override
     public boolean delete(T user) {
         boolean result = false;
         Session session = sessionFactory.openSession();
@@ -120,7 +116,6 @@ public class AccountHibernateDBStore<T extends User> implements AccountStore<T>,
         return result;
     }
 
-    @Override
     public List<T> findAll() {
         List<T> result = new ArrayList<>();
         Session session = sessionFactory.openSession();
@@ -147,7 +142,6 @@ public class AccountHibernateDBStore<T extends User> implements AccountStore<T>,
         return result;
     }
 
-    @Override
     public Optional<T> findById(int id) {
         Optional<T> result = Optional.empty();
         Session session = sessionFactory.openSession();
@@ -173,7 +167,6 @@ public class AccountHibernateDBStore<T extends User> implements AccountStore<T>,
         return result;
     }
 
-    @Override
     public Optional<T> findByLoginAndPassword(T user) {
         Optional<T> result = Optional.empty();
         Session session = sessionFactory.openSession();
@@ -201,7 +194,6 @@ public class AccountHibernateDBStore<T extends User> implements AccountStore<T>,
         return result;
     }
 
-    @Override
     public void close() throws Exception {
         StandardServiceRegistryBuilder.destroy(registry);
     }

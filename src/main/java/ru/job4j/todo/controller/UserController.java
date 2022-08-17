@@ -14,6 +14,8 @@ import ru.job4j.todo.model.User;
 import ru.job4j.todo.model.UserWithoutPassword;
 import ru.job4j.todo.service.AccountService;
 import ru.job4j.todo.service.SecurityService;
+import ru.job4j.todo.store.AccountHibernateStore;
+import ru.job4j.todo.store.AccountHibernateStoreSafe;
 import ru.job4j.todo.util.UserHandler;
 
 import javax.servlet.http.HttpSession;
@@ -23,15 +25,13 @@ import java.util.Optional;
 @ThreadSafe
 @Controller
 public class UserController {
-    @Autowired
-    private final AccountService<User> accountService;
-    @Autowired
-    private final AccountService<UserWithoutPassword> accountServiceSafeMode;
+    private final AccountHibernateStore<User> accountService;
+    private final AccountHibernateStoreSafe<UserWithoutPassword> accountServiceSafeMode;
     private final SecurityService securityService;
     private final UserHandler userHandler;
 
-    public UserController(AccountService<User> accountService,
-                          AccountService<UserWithoutPassword> accountServiceSafeMode,
+    public UserController(AccountHibernateStore<User> accountService,
+                          AccountHibernateStoreSafe<UserWithoutPassword> accountServiceSafeMode,
                           SecurityService securityService,
                           UserHandler userHandler) {
         this.accountService = accountService;

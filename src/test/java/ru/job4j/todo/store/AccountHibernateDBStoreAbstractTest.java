@@ -21,9 +21,9 @@ import java.util.Optional;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class AccountHibernateDBStoreTest {
+class AccountHibernateDBStoreAbstractTest {
 
-    private static AccountHibernateDBStore<User> store;
+    private static AccountStore<User> store;
 
     @BeforeAll
     static void init() {
@@ -34,7 +34,7 @@ class AccountHibernateDBStoreTest {
                 buildSessionFactory();
 
         try {
-            store = new AccountHibernateDBStore(sessionFactory);
+            store = new AccountHibernateStore(sessionFactory);
         } catch (HibernateException e) {
             LoggerService.LOGGER.error(
                     "Exception in creating session factory in AccountHibernateDBStore.init method",
