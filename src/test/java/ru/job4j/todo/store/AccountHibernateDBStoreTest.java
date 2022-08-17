@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.job4j.todo.exception.UserWithSameLoginAlreadyExistsException;
 import ru.job4j.todo.model.User;
-import ru.job4j.todo.model.UserWithoutPassword;
 import ru.job4j.todo.service.LoggerService;
 
 import java.util.List;
@@ -150,22 +149,5 @@ class AccountHibernateDBStoreTest {
 
         assertThrows(UserWithSameLoginAlreadyExistsException.class,
                 () -> store.add(userToAdd2));
-    }
-
-    @Test
-    void whenAddAndFindByIdWithoutPassword() {
-        UserWithoutPassword userToAdd = new UserWithoutPassword(0,
-                "user 8", "user 8 login", "user8password".toCharArray());
-        store.add(userToAdd);
-        UserWithoutPassword userWithoutPassword =
-                new UserWithoutPassword(userToAdd.getId(), "", "", "".toCharArray());
-
-        Optional<User> userFromDB = store.findById(userWithoutPassword.getId());
-
-        assertThat(userFromDB).isPresent();
-        assertThat(userFromDB.get().getId()).isEqualTo(userToAdd.getId());
-        assertThat(userFromDB.get().getName()).isEqualTo(userToAdd.getName());
-        assertThat(userFromDB.get().getLogin()).isEqualTo(userToAdd.getLogin());
-        assertThat(userFromDB.get().getPassword()).isEqualTo(userToAdd.getPassword());
     }
 }

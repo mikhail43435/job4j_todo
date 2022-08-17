@@ -34,10 +34,6 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public static void main(String[] args) {
-        System.out.println(TaskStatus.FINISHED.getDescription());
-    }
-
     public int getId() {
         return id;
     }

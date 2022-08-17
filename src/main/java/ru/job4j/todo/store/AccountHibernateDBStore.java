@@ -27,14 +27,6 @@ public class AccountHibernateDBStore<T extends User> implements AccountStore<T>,
         this.sessionFactory = sessionFactory;
     }
 
-    public void showGenericType() {
-        Class<T> springGenericType = (Class<T>) GenericTypeResolver.resolveTypeArgument(getClass(),
-                AccountHibernateDBStore.class);
-        System.out.print("=============== AccountHibernateDBStore generic type >>> ");
-        System.out.println(springGenericType);
-
-    }
-
     @Override
     public T add(T user) {
         Session session = sessionFactory.openSession();
@@ -128,10 +120,7 @@ public class AccountHibernateDBStore<T extends User> implements AccountStore<T>,
         try {
             transaction = session.beginTransaction();
             Query query = session.createQuery("from User u order by u.id");
-            /*result.addAll(query.list());*/
-            for (Object o : query.list()) {
-                result.add((T) o);
-            }
+            result.addAll(query.list());
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
@@ -141,9 +130,6 @@ public class AccountHibernateDBStore<T extends User> implements AccountStore<T>,
         } finally {
             session.close();
         }
-        showGenericType();
-        System.out.println("==================== findAll method ====================");
-        System.out.println(result.toString());
         return result;
     }
 

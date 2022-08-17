@@ -4,38 +4,29 @@ import net.jcip.annotations.ThreadSafe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.job4j.todo.exception.UserWithSameLoginAlreadyExistsException;
 import ru.job4j.todo.model.User;
-import ru.job4j.todo.model.UserWithoutPassword;
 import ru.job4j.todo.service.AccountService;
+import ru.job4j.todo.service.LoggerService;
 import ru.job4j.todo.service.SecurityService;
 import ru.job4j.todo.util.UserHandler;
 
 import javax.servlet.http.HttpSession;
-import java.util.List;
 import java.util.Optional;
 
 @ThreadSafe
 @Controller
 public class UserController {
-    @Autowired
     private final AccountService<User> accountService;
-    @Autowired
-    private final AccountService<UserWithoutPassword> accountServiceSafeMode;
     private final SecurityService securityService;
     private final UserHandler userHandler;
 
     public UserController(AccountService<User> accountService,
-                          AccountService<UserWithoutPassword> accountServiceSafeMode,
                           SecurityService securityService,
                           UserHandler userHandler) {
         this.accountService = accountService;
-        this.accountServiceSafeMode = accountServiceSafeMode;
         this.securityService = securityService;
         this.userHandler = userHandler;
     }
@@ -77,7 +68,8 @@ public class UserController {
                                       @RequestParam(name = "fail", required = false) Boolean fail,
                                       @RequestParam(name = "errorMessage",
                                               defaultValue = "") String errorMessage) {
-        session.invalidate();
+        //session.invalidate();
+        session.setAttribute("user", null);
         model.addAttribute("fail", fail != null);
         model.addAttribute("errorMessage", errorMessage);
         model.addAttribute("user", userHandler.handleUserOfCurrentSession(session));
@@ -114,17 +106,14 @@ public class UserController {
     public String users(Model model,
                         HttpSession session) {
         model.addAttribute("HeaderText", "List of users");
-        model.addAttribute("users", accountServiceSafeMode.findAll());
+        model.addAttribute("users", accountService.findAll());
         model.addAttribute("user", userHandler.handleUserOfCurrentSession(session));
-
-        System.out.println(">>> Request through accountService");
-        List<User> userList = accountService.findAll();
-        System.out.println(userList);
-
-        System.out.println(">>> Request through accountServiceSafeMode");
-        List<UserWithoutPassword> userWithoutPasswordList = accountServiceSafeMode.findAll();
-        System.out.println(userWithoutPasswordList);
-
         return "users";
+    }
+
+    @ExceptionHandler({Exception.class})
+    public String handleException(Exception e, Model model) {
+        LoggerService.LOGGER.error("Exception in UserController.java", e);
+        return "redirect:/error";
     }
 }
