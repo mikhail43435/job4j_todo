@@ -84,13 +84,13 @@ class TaskJDBCDBStoreTest {
         Task taskToAdd1 = new Task(0,
                 "task 321",
                 "task 321 desc",
-                TaskStatus.FOR_TEST,
+                TaskStatus.NEW,
                 LocalDate.now());
         store.add(taskToAdd1);
         Task taskToAdd2 = new Task(0,
                 "task 322",
                 "task 322 desc",
-                TaskStatus.FOR_TEST,
+                TaskStatus.NEW,
                 LocalDate.now());
         store.add(taskToAdd2);
         List<Task> listOfNewTasks = List.of(taskToAdd1, taskToAdd2);

@@ -4,7 +4,7 @@ create TABLE IF NOT EXISTS tasks
     id          SERIAL PRIMARY KEY,
     name        TEXT  NOT NULL,
     description TEXT NOT NULL,
-    status      TEXT NOT NULL check (status in ('NEW', 'FINISHED', 'FOR_TEST')),
+    status      TEXT NOT NULL check (status in ('NEW', 'FINISHED')),
     created     TIMESTAMP     NOT NULL
 );
 

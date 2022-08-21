@@ -6,8 +6,7 @@ import java.util.List;
 
 public enum TaskStatus {
     NEW("New task"),
-    FINISHED("Finished task"),
-    FOR_TEST("Finished task");
+    FINISHED("Finished task");
 
     private final String description;
 
