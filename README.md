@@ -24,8 +24,6 @@
 - Travis CI
 ```
 
-`java` `spring boot` `thymeleaf` `postgresql` `liquidbase` `h2` `logback` `slf4j` `junit` `assertj` `mockito` `travis CI`
-
 ###Pages (templates):
 
 ####tasks
