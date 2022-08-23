@@ -25,7 +25,7 @@
 ```
 
 ### Application interface
-!(/assets/images/tasks.jpg)
+!(assets/images/tasks.jpg)
 
 ### Pages (templates):
 
