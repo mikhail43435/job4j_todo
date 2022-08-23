@@ -24,12 +24,10 @@
 - Travis CI
 ```
 
-### Application interface
-!(../blob/master/assets/images/tasks.jpg)
-
 ### Pages (templates):
 
 #### tasks
+![ScreenShot](assets/images/tasks.jpg)
 <sub>Displays a list of all tasks.</sub>
 ```
 fields:
@@ -43,7 +41,7 @@ buttons:
 - Show finished
 ```
 #### showTask
-
+![ScreenShot](assets/images/showTask.jpg)
 <sub>tasks details of selected task.</sub>
 ```
 fields (all view only):
@@ -58,6 +56,7 @@ buttons:
  - Delete
 ```
 #### createTask
+![ScreenShot](assets/images/createTask.jpg)
 <sub>Page for creating new task.</sub>
 ```
 fields:
@@ -68,6 +67,7 @@ buttons:
  - Discard (back to task's list)
 ```
 #### editTask
+![ScreenShot](assets/images/editTask.jpg)
 <sub>Page for editing selected task.</sub>
 ```fields:
  - #
@@ -80,6 +80,7 @@ buttons:
  - Discard (back to task's list)
  ```
 #### loginUser
+![ScreenShot](assets/images/loginUser.jpg)
 <sub>Page for user login action.</sub>
 ```
 fields:
@@ -91,6 +92,7 @@ buttons:
  - Register
  ```
 #### registrationUser
+![ScreenShot](assets/images/registrationUser.jpg)
 <sub>Page for user registration action.</sub>
 ```
 fields:
