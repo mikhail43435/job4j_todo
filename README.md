@@ -24,9 +24,12 @@
 - Travis CI
 ```
 
-###Pages (templates):
+### Application interface
+!(/assets/images/tasks.jpg)
 
-####tasks
+### Pages (templates):
+
+#### tasks
 <sub>Displays a list of all tasks.</sub>
 ```
 fields:
@@ -39,7 +42,7 @@ buttons:
 - Show new
 - Show finished
 ```
-#####showTask
+#### showTask
 
 <sub>tasks details of selected task.</sub>
 ```
@@ -54,7 +57,7 @@ buttons:
  - Edit - available only task has 'news' status
  - Delete
 ```
-#####createTask
+#### createTask
 <sub>Page for creating new task.</sub>
 ```
 fields:
@@ -64,7 +67,7 @@ buttons:
  - Save
  - Discard (back to task's list)
 ```
-#####editTask
+#### editTask
 <sub>Page for editing selected task.</sub>
 ```fields:
  - #
@@ -76,7 +79,7 @@ buttons:
  - Save
  - Discard (back to task's list)
  ```
-#####loginUser
+#### loginUser
 <sub>Page for user login action.</sub>
 ```
 fields:
@@ -87,7 +90,7 @@ buttons:
  - Login
  - Register
  ```
-#####registrationUser
+#### registrationUser
 <sub>Page for user registration action.</sub>
 ```
 fields:
@@ -97,7 +100,7 @@ fields:
 buttons:
   - Register
 ```
-#####users
+#### users
 <sub>Displays a list of all users.</sub>
 ```
 fields:
@@ -105,7 +108,7 @@ fields:
   - login
   - password
 ```
-#####Constrains
+### Constrains
 ```
 task.name - length range 1-255, not blank string
 task.description - length range 0-1000
