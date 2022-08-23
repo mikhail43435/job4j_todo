@@ -26,9 +26,9 @@
 
 `java` `spring boot` `thymeleaf` `postgresql` `liquidbase` `h2` `logback` `slf4j` `junit` `assertj` `mockito` `travis CI`
 
-####Pages (templates):
+###Pages (templates):
 
-#####tasks
+####tasks
 <sub>Displays a list of all tasks.</sub>
 ```
 fields:
@@ -42,6 +42,7 @@ buttons:
 - Show finished
 ```
 #####showTask
+
 <sub>tasks details of selected task.</sub>
 ```
 fields (all view only):
