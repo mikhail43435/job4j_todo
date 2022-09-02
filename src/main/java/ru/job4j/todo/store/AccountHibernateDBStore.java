@@ -27,6 +27,7 @@ public class AccountHibernateDBStore<T extends User> implements AccountStore<T>,
         this.sessionFactory = sessionFactory;
     }
 
+/*
     @Override
     public T add(T user) {
         Session session = sessionFactory.openSession();
@@ -129,23 +130,23 @@ public class AccountHibernateDBStore<T extends User> implements AccountStore<T>,
         }
         return result;
     }
+*/
 
     @Override
     public Optional<T> findById(int id) {
-        T result = this.tx(
+        return this.tx(
                 session -> {
                     final Query query =
                             session.createQuery(
                                     "from User i where i.id = :fid").
                                     setParameter("fid", id);
-                    return (T) query.uniqueResult();
+                    return query.uniqueResultOptional();
                 }, "findById");
-        return result == null ? Optional.empty() : Optional.of(result);
    }
 
     @Override
     public Optional<T> findByLoginAndPassword(T user) {
-        T result = this.tx(
+        return this.tx(
                 session -> {
                     final Query query =
                             session.createQuery(
@@ -154,18 +155,17 @@ public class AccountHibernateDBStore<T extends User> implements AccountStore<T>,
                                             + "and u.password = :fpassword").
                                     setParameter("flogin", user.getLogin()).
                                     setParameter("fpassword", user.getPassword());
-                    return (T) query.uniqueResult();
+                    return query.uniqueResultOptional();
                 }, "findByLoginAndPassword");
-        return result == null ? Optional.empty() : Optional.of(result);
     }
 
-    private T tx(final Function<Session, T> command, String methodName) {
-        T result = null;
+    private Optional<T> tx(final Function<Session, T> func, String methodName) {
+        Optional<T> result = Optional.empty();
         final Session session = sessionFactory.openSession();
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
-            result = command.apply(session);
+            result = Optional.ofNullable(func.apply(session));
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
