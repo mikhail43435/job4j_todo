@@ -11,6 +11,7 @@ import ru.job4j.todo.exception.UserWithSameLoginAlreadyExistsException;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.LoggerService;
 
+import javax.persistence.EntityManagerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,8 +25,11 @@ public class AccountHibernateDBStore implements AccountStore, AutoCloseable {
             .configure().build();
     private final SessionFactory sessionFactory;
 
-    public AccountHibernateDBStore(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
+    public AccountHibernateDBStore(EntityManagerFactory factory) {
+        if (factory.unwrap(SessionFactory.class) == null) {
+            throw new NullPointerException("Factory is not a hibernate factory");
+        }
+        this.sessionFactory = factory.unwrap(SessionFactory.class);
     }
 
     @Override
@@ -57,14 +61,14 @@ public class AccountHibernateDBStore implements AccountStore, AutoCloseable {
     public boolean update(User user) {
         return this.booleanReturnQueryFunc(
                 session -> session.createQuery(
-                            "update User u set "
-                                    + "u.name = :fname, "
-                                    + "u.password = :fpassword "
-                                    + "where u.id = :fid").
-                            setParameter("fname", user.getName()).
-                            setParameter("fpassword", user.getPassword()).
-                            setParameter("fid", user.getId()).
-                            executeUpdate(),
+                        "update User u set "
+                                + "u.name = :fname, "
+                                + "u.password = :fpassword "
+                                + "where u.id = :fid").
+                        setParameter("fname", user.getName()).
+                        setParameter("fpassword", user.getPassword()).
+                        setParameter("fid", user.getId()).
+                        executeUpdate(),
                 "delete");
     }
 
@@ -73,9 +77,9 @@ public class AccountHibernateDBStore implements AccountStore, AutoCloseable {
 
         return this.booleanReturnQueryFunc(
                 session -> session.createQuery(
-                                "delete from User where id = :id").
-                                setParameter("id", user.getId()).
-                                executeUpdate(),
+                        "delete from User where id = :id").
+                        setParameter("id", user.getId()).
+                        executeUpdate(),
                 "delete");
     }
 

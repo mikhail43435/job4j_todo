@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.service.LoggerService;
 
+import javax.persistence.EntityManagerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,8 +22,11 @@ public class TaskHibernateDBStore implements TasksStore, AutoCloseable {
             .configure().build();
     private final SessionFactory sessionFactory;
 
-    public TaskHibernateDBStore(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
+    public TaskHibernateDBStore(EntityManagerFactory factory) {
+        if (factory.unwrap(SessionFactory.class) == null) {
+            throw new NullPointerException("Factory is not a hibernate factory");
+        }
+        this.sessionFactory = factory.unwrap(SessionFactory.class);
     }
 
     @Override
