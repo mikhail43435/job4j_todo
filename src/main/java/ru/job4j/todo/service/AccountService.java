@@ -14,18 +14,18 @@ import java.util.Optional;
 
 @ThreadSafe
 @Service
-public class AccountService<T extends User> {
+public class AccountService {
 
-    private final AccountHibernateDBStore<T> store;
+    private final AccountHibernateDBStore store;
     private final ValidationService validationService;
 
-    public AccountService(AccountHibernateDBStore<T> store,
+    public AccountService(AccountHibernateDBStore store,
                           ValidationService validationService) {
         this.store = store;
         this.validationService = validationService;
     }
 
-    public T add(T user) {
+    public User add(User user) {
 
         Optional<InvalidUserPropertyException> userFieldValidationResult = validateUserFields(user);
         if (userFieldValidationResult.isPresent()) {
@@ -43,7 +43,7 @@ public class AccountService<T extends User> {
         return user;
     }
 
-    private Optional<InvalidUserPropertyException> validateUserFields(T user) {
+    private Optional<InvalidUserPropertyException> validateUserFields(User user) {
         Optional<InvalidUserPropertyException> validationException;
 
         validationException = validationService.validateUserName(user.getName());
@@ -61,7 +61,7 @@ public class AccountService<T extends User> {
         return Optional.empty();
     }
 
-    public boolean update(T user) {
+    public boolean update(User user) {
         if (!store.findByLoginAndPassword(user).isPresent()) {
             throw new UpdateUserException("Error occurred while updating user data. "
                     + "User with specified login/password not found.");
@@ -69,19 +69,19 @@ public class AccountService<T extends User> {
         return store.update(user);
     }
 
-    public boolean delete(T user) {
+    public boolean delete(User user) {
         return store.delete(user);
     }
 
-    public List<T> findAll() {
+    public List<User> findAll() {
         return store.findAll();
     }
 
-    public Optional<T> findById(int id) {
+    public Optional<User> findById(int id) {
         return store.findById(id);
     }
 
-    public Optional<T> findByLoginAndPassword(T user) {
+    public Optional<User> findByLoginAndPassword(User user) {
         return store.findByLoginAndPassword(user);
     }
 

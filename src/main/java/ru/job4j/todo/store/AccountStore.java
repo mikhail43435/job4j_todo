@@ -4,7 +4,7 @@ import ru.job4j.todo.model.User;
 
 import java.util.Optional;
 
-public interface AccountStore<T extends User> extends Store<T>, AutoCloseable {
+public interface AccountStore extends Store<User>, AutoCloseable {
 
-    Optional<T> findByLoginAndPassword(T user);
+    Optional<User> findByLoginAndPassword(User user);
 }

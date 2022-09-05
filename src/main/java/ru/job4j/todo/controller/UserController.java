@@ -18,11 +18,11 @@ import java.util.Optional;
 @ThreadSafe
 @Controller
 public class UserController {
-    private final AccountService<User> accountService;
+    private final AccountService accountService;
     private final SecurityService securityService;
     private final UserHandler userHandler;
 
-    public UserController(AccountService<User> accountService,
+    public UserController(AccountService accountService,
                           SecurityService securityService,
                           UserHandler userHandler) {
         this.accountService = accountService;

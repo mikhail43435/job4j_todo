@@ -15,9 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.ToIntFunction;
 
 @Repository
-public class AccountHibernateDBStore<T extends User> implements AccountStore<T>, AutoCloseable {
+public class AccountHibernateDBStore implements AccountStore, AutoCloseable {
 
     private final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
             .configure().build();
@@ -27,9 +28,8 @@ public class AccountHibernateDBStore<T extends User> implements AccountStore<T>,
         this.sessionFactory = sessionFactory;
     }
 
-/*
     @Override
-    public T add(T user) {
+    public User add(User user) {
         Session session = sessionFactory.openSession();
         Transaction transaction = null;
         try {
@@ -54,14 +54,9 @@ public class AccountHibernateDBStore<T extends User> implements AccountStore<T>,
     }
 
     @Override
-    public boolean update(T user) {
-        boolean result = false;
-        Session session = sessionFactory.openSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
-            int executeUpdateResult =
-                    session.createQuery(
+    public boolean update(User user) {
+        return this.booleanReturnQueryFunc(
+                session -> session.createQuery(
                             "update User u set "
                                     + "u.name = :fname, "
                                     + "u.password = :fpassword "
@@ -69,7 +64,28 @@ public class AccountHibernateDBStore<T extends User> implements AccountStore<T>,
                             setParameter("fname", user.getName()).
                             setParameter("fpassword", user.getPassword()).
                             setParameter("fid", user.getId()).
-                            executeUpdate();
+                            executeUpdate(),
+                "delete");
+    }
+
+    @Override
+    public boolean delete(User user) {
+
+        return this.booleanReturnQueryFunc(
+                session -> session.createQuery(
+                                "delete from User where id = :id").
+                                setParameter("id", user.getId()).
+                                executeUpdate(),
+                "delete");
+    }
+
+    private Boolean booleanReturnQueryFunc(final ToIntFunction<Session> func, String methodName) {
+        Boolean result = false;
+        final Session session = sessionFactory.openSession();
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            int executeUpdateResult = func.applyAsInt(session);
             transaction.commit();
             if (executeUpdateResult == 1) {
                 result = true;
@@ -78,7 +94,10 @@ public class AccountHibernateDBStore<T extends User> implements AccountStore<T>,
             if (transaction != null) {
                 transaction.rollback();
             }
-            LoggerService.LOGGER.error("Exception in AccountHibernateDBStore.update method", e);
+            LoggerService.LOGGER.error(
+                    "Exception in AccountHibernateDBStore."
+                            + methodName
+                            + " method", e);
         } finally {
             session.close();
         }
@@ -86,38 +105,13 @@ public class AccountHibernateDBStore<T extends User> implements AccountStore<T>,
     }
 
     @Override
-    public boolean delete(T user) {
-        boolean result = false;
+    public List<User> findAll() {
+        List<User> result = new ArrayList<>();
         Session session = sessionFactory.openSession();
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
-            int executeUpdateResult = session.createQuery("delete from User where id = :id")
-                    .setParameter("id", user.getId())
-                    .executeUpdate();
-            transaction.commit();
-            if (executeUpdateResult == 1) {
-                result = true;
-            }
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            LoggerService.LOGGER.error("Exception in AccountHibernateDBStore.delete method", e);
-        } finally {
-            session.close();
-        }
-        return result;
-    }
-
-    @Override
-    public List<T> findAll() {
-        List<T> result = new ArrayList<>();
-        Session session = sessionFactory.openSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
-            Query query = session.createQuery("from User u order by u.id");
+            Query<User> query = session.createQuery("from User u order by u.id");
             result.addAll(query.list());
             transaction.commit();
         } catch (Exception e) {
@@ -130,25 +124,24 @@ public class AccountHibernateDBStore<T extends User> implements AccountStore<T>,
         }
         return result;
     }
-*/
 
     @Override
-    public Optional<T> findById(int id) {
-        return this.tx(
+    public Optional<User> findById(int id) {
+        return this.optionalUserReturnQueryFunc(
                 session -> {
-                    final Query query =
+                    final Query<User> query =
                             session.createQuery(
                                     "from User i where i.id = :fid").
                                     setParameter("fid", id);
                     return query.uniqueResultOptional();
                 }, "findById");
-   }
+    }
 
     @Override
-    public Optional<T> findByLoginAndPassword(T user) {
-        return this.tx(
+    public Optional<User> findByLoginAndPassword(User user) {
+        return this.optionalUserReturnQueryFunc(
                 session -> {
-                    final Query query =
+                    final Query<User> query =
                             session.createQuery(
                                     "from User u "
                                             + "where u.login = :flogin "
@@ -159,13 +152,14 @@ public class AccountHibernateDBStore<T extends User> implements AccountStore<T>,
                 }, "findByLoginAndPassword");
     }
 
-    private Optional<T> tx(final Function<Session, T> func, String methodName) {
-        Optional<T> result = Optional.empty();
+    private Optional<User> optionalUserReturnQueryFunc(final Function<Session, Optional<User>> func,
+                                                       String methodName) {
+        Optional<User> result = Optional.empty();
         final Session session = sessionFactory.openSession();
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
-            result = Optional.ofNullable(func.apply(session));
+            result = func.apply(session);
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {

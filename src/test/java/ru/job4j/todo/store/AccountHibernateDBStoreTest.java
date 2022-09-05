@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class AccountHibernateDBStoreTest {
 
-    private static AccountHibernateDBStore<User> store;
+    private static AccountHibernateDBStore store;
 
     @BeforeAll
     static void init() {
