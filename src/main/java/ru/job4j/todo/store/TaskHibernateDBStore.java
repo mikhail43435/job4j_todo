@@ -3,7 +3,6 @@ package ru.job4j.todo.store;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
@@ -18,8 +17,6 @@ import java.util.Optional;
 @Repository
 public class TaskHibernateDBStore implements TasksStore, AutoCloseable {
 
-    private final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
-            .configure().build();
     private final SessionFactory sessionFactory;
 
     public TaskHibernateDBStore(EntityManagerFactory factory) {
@@ -180,6 +177,7 @@ public class TaskHibernateDBStore implements TasksStore, AutoCloseable {
 
     @Override
     public void close() throws Exception {
-        StandardServiceRegistryBuilder.destroy(registry);
+        StandardServiceRegistryBuilder.destroy(
+                new StandardServiceRegistryBuilder().configure().build());
     }
 }
