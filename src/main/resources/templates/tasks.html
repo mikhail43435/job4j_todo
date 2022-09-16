@@ -57,6 +57,7 @@
                 <th scope="col">Name</th>
                 <th scope="col">Date of creation</th>
                 <th scope="col">Status</th>
+                <th scope="col">User</th>
             </tr>
             </thead>
             <tbody>
@@ -69,6 +70,7 @@
                 <td>
                     <th:block th:text="${task.status.getDescription()}"/>
                 </td>
+                <td th:text="${task.user.getName()}"/>
             </tr>
             </tbody>
         </table>

@@ -36,4 +36,8 @@ public class Task implements Serializable {
 
     @Column(nullable = false)
     private LocalDate created;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

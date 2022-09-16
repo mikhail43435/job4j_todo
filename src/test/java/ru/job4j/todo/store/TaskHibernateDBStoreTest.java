@@ -45,7 +45,8 @@ class TaskHibernateDBStoreTest {
                 "task 2",
                 "task 2 desc",
                 TaskStatus.NEW,
-                LocalDate.now());
+                LocalDate.now(),
+                null);
         store.add(taskToAdd);
         Optional<Task> taskFromDB = store.findById(taskToAdd.getId());
         assertThat(taskFromDB).isPresent();
@@ -62,38 +63,44 @@ class TaskHibernateDBStoreTest {
                 "task 31",
                 "task 31 desc",
                 TaskStatus.NEW,
-                LocalDate.now());
+                LocalDate.now(),
+                null);
         store.add(taskToAdd1);
         Task taskToAdd2 = new Task(0,
                 "task 32",
                 "task 32 desc",
                 TaskStatus.FINISHED,
-                LocalDate.now());
+                LocalDate.now(),
+                null);
         store.add(taskToAdd2);
         Task taskToAdd3 = new Task(0,
                 "task 33",
                 "task 33 desc",
                 TaskStatus.NEW,
-                LocalDate.now());
+                LocalDate.now(),
+                null);
         store.add(taskToAdd3);
         Task taskToAdd4 =
                 new Task(0,
                         "task 34",
                         "task 34 desc",
                         TaskStatus.NEW,
-                        LocalDate.now().minusDays(1));
+                        LocalDate.now().minusDays(1),
+                        null);
         store.add(taskToAdd4);
         Task taskToAdd5 = new Task(0,
                 "task 5535",
                 "task 35 desc",
                 TaskStatus.FINISHED,
-                LocalDate.now());
+                LocalDate.now(),
+                null);
         store.add(taskToAdd5);
         Task taskToAdd6 = new Task(0,
                 "task 36",
                 "task 36 desc",
                 TaskStatus.NEW,
-                LocalDate.now());
+                LocalDate.now(),
+                null);
         store.add(taskToAdd6);
         List<Task> listOfNewTasks =
                 List.of(taskToAdd1, taskToAdd2, taskToAdd3, taskToAdd4, taskToAdd5, taskToAdd6);
@@ -109,13 +116,15 @@ class TaskHibernateDBStoreTest {
                 "task 321",
                 "task 321 desc",
                 TaskStatus.NEW,
-                LocalDate.now());
+                LocalDate.now(),
+                null);
         store.add(taskToAdd1);
         Task taskToAdd2 = new Task(0,
                 "task 322",
                 "task 322 desc",
                 TaskStatus.NEW,
-                LocalDate.now());
+                LocalDate.now(),
+                null);
         store.add(taskToAdd2);
         List<Task> listOfNewTasks = List.of(taskToAdd1, taskToAdd2);
         list.addAll(listOfNewTasks);
@@ -128,13 +137,15 @@ class TaskHibernateDBStoreTest {
                 "task 4",
                 "task 4 desc",
                 TaskStatus.NEW,
-                LocalDate.now());
+                LocalDate.now(),
+                null);
         store.add(taskToAdd);
         Task taskToUpdate = new Task(
                 taskToAdd.getId(),
                 "task 1 updated",
                 "task 1 updated desc",
-                TaskStatus.NEW, LocalDate.now().plusDays(1));
+                TaskStatus.NEW, LocalDate.now().plusDays(1),
+                null);
         assertThat(store.update(taskToUpdate)).isTrue();
 
         Optional<Task> taskFromDBAfterUpdate = store.findById(taskToAdd.getId());
@@ -152,7 +163,8 @@ class TaskHibernateDBStoreTest {
                 "task 5",
                 "task 5 desc",
                 TaskStatus.NEW,
-                LocalDate.now());
+                LocalDate.now(),
+                null);
         store.add(taskToAdd);
         assertThat(store.findById(taskToAdd.getId())).isPresent();
         store.delete(taskToAdd);

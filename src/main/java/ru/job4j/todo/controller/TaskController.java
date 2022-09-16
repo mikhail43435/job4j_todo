@@ -108,6 +108,7 @@ public class TaskController {
                                  RedirectAttributes redirectAttributes) {
         task.setStatus(TaskStatus.NEW);
         task.setCreated(LocalDate.now());
+        task.setUser(userHandler.handleUserOfCurrentSession(session));
         try {
             taskService.add(task);
         } catch (Exception e) {
